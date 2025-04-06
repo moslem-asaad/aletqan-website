@@ -4,8 +4,11 @@ import Footer from "../HomePage/Footer";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import Headbar from "../HomePage/Headbar";
 import styles from "./Register.module.css";
+import { useNavigate } from "react-router-dom";
+
 
 function Register() {
+    const navigate = useNavigate();
     const [showPassword, setShowPassword] = useState(false);
     const togglePassword = () => {
         setShowPassword(!showPassword);
@@ -14,7 +17,6 @@ function Register() {
         <div className={styles.registerPage}>
             <Headbar />
             <main className={styles.registerContent}>
-                <h1>تسجيل الدخول للخدمة المطلوبة</h1>
                 <div className={styles.infoCard}>
 
                     <div className={styles.rightSide}>
@@ -43,12 +45,12 @@ function Register() {
 
                                     <div className={styles.userType}>
                                         <label>معلم</label>
-                                        <input type="radio" />
+                                        <input type="radio" name="userType" value="teacher"/>
                                     </div>
 
                                     <div className={styles.userType}>
                                         <label>طالب</label>
-                                        <input type="radio" />
+                                        <input type="radio" name="userType" value="student" />
                                     </div>
 
                                 </div>
@@ -59,7 +61,7 @@ function Register() {
                     <div className={styles.divider}></div>
                     <div className={styles.leftSide}>
                         <p>مشترك سابق ؟</p>
-                        <button className={styles.loginBtn}>تسجيل الدخول</button>
+                        <button className={styles.loginBtn}onClick={() => navigate('/login')} >تسجيل الدخول</button>
                     </div>
                 </div>
             </main>

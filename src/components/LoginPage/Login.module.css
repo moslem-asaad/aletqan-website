@@ -107,7 +107,7 @@
     flex-direction: row;
     align-items: center;
     gap: 10px;
-    padding-right: 82px;
+    padding-right: 110px;
     cursor: pointer;
   }
   
@@ -142,6 +142,25 @@
   }
   
   @media (max-width: 768px) {
+
+    .passwordWrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      margin-bottom: 7px;
+    }
+    
+    .togglePassword {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10px;
+      color: #569cf9;
+      cursor: pointer;
+      flex-wrap: wrap; 
+      padding-right: 0px;
+    }
+    
     .infoCard {
       flex-direction: column;
       height: auto;
@@ -172,5 +191,8 @@
     .loginBtn {
       width: 80%;
     }
+
+    
+    
   }
   
