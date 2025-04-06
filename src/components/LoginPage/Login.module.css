@@ -1,0 +1,176 @@
+.loginPage {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    font-family: 'Tajawal', sans-serif;
+  }
+  
+  .loginContent {
+    flex: 1;
+    padding: 40px 20px;
+    text-align: center;
+    background-color: #b7dcff;
+  }
+  
+  .loginContent h1 {
+    font-size: 26px;
+    color: #000;
+  }
+  
+  .infoCard {
+    background-color: #f4faff;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.699);
+    padding: 40px 50px;
+    max-width: 700px;
+    height: 400px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    gap: 30px;
+    align-items: center;
+    direction: rtl;
+  }
+  
+  .leftSide, .rightSide {
+    flex: 1;
+  }
+  
+  .leftSide {
+    text-align: center;
+  }
+  
+  .leftSide p {
+    font-size: 18px;
+    margin-bottom: 15px;
+    font-weight: bold;
+  }
+  
+  .registerBtn {
+    padding: 10px 40px;
+    background-color: white;
+    border: 2px solid #000000;
+    color: #000000;
+    font-size: 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Tajawal', sans-serif;
+  }
+  
+  .registerBtn:hover {
+    background-color: #004aad;
+    color: white;
+  }
+  
+  .divider {
+    width: 2px;
+    height: 90%;
+    background-color: #000000;
+    border-radius: 2px;
+  }
+  
+  .rightSide form {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    text-align: right;
+  }
+  
+  .rightSide label {
+    font-weight: bold;
+    font-size: 14px;
+    display: block;
+    margin-bottom: 2px;
+  }
+  
+  .rightSide input {
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    width: 100%;
+    margin-bottom: 7px;
+  }
+  
+  .passwordWrapper {
+    display: flex;
+    flex-direction: row;
+    gap: 40px;
+  }
+  
+  .togglePassword {
+    font-size: 10px;
+    color: #569cf9;
+    text-decoration: none;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    padding-right: 82px;
+    cursor: pointer;
+  }
+  
+  .togglePassword label {
+    font-size: 10px;
+    padding-right: 10%;
+    font-weight: 400;
+  }
+  
+  
+  .forgotPassword {
+    font-size: 13px;
+    color: #569cf9;
+    text-decoration: none;
+    align-self: flex-start;
+    margin-top: -5px;
+  }
+  
+  .loginBtn {
+    padding: 10px;
+    background-color: #000;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+  
+  .loginBtn:hover {
+    background-color: #333;
+  }
+  
+  @media (max-width: 768px) {
+    .infoCard {
+      flex-direction: column;
+      height: auto;
+      padding: 30px 20px;
+    }
+  
+    .divider {
+      display: block;
+      width: 90%;
+      height: 2px;
+      background-color: #000000;
+      margin: 10px auto;
+    }
+  
+    .rightSide, .leftSide {
+      width: 100%;
+    }
+  
+    .rightSide form {
+      width: 100%;
+    }
+  
+    .rightSide input {
+      width: 80%;
+      box-sizing: border-box;
+    }
+  
+    .loginBtn {
+      width: 80%;
+    }
+  }
+  

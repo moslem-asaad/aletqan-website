@@ -1,0 +1,41 @@
+.our-service-section {
+    background-color: #ffeef2;
+    padding: 40px 20px;
+    text-align: center;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-weight: bold;
+  }
+  
+  .title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 40px;
+    display: inline-block;         
+    border-bottom: 3px solid #B7DCFF; 
+    padding-bottom: 5px;          
+  }
+  
+  .service-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+  
+  .service-card {
+    background-color: white;
+    padding: 20px;
+    border-radius: 20px;
+    font-size: 20px;
+    line-height: 1.6;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    text-align: center;
+  }
+
+  @media (max-width: 600px) {
+    .service-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  
