@@ -8,9 +8,46 @@ import styles from "./Login.module.css";
 function Login() {
     const navigate = useNavigate();
     const [showPassword, setShowPassword] = useState(false);
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
     const togglePassword = () => {
         setShowPassword(!showPassword);
     };
+
+    const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const data = {
+        email,
+        password,
+    };
+
+    try {
+        const response = await fetch("http://localhost:8090/api/auth/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+        });
+
+        if (response.ok) {
+            const result = await response.json();
+            console.log("نجح تسجيل الدخول:", result);
+
+            localStorage.setItem("token", result.token);
+
+            navigate("/"); // navigate to the relevant page when completed
+        } else {
+            const error = await response.text();
+            console.error("فشل الدخول:", error);
+            alert("فشل الدخول: " + error);
+        }
+    } catch (error) {
+        console.error("خطأ في الشبكة:", error);
+        alert("حدث خطأ أثناء تسجيل الدخول.");
+    }
+};
     return (
         <div className={styles.loginPage}>
             <Headbar />
@@ -19,9 +56,15 @@ function Login() {
                 <div className={styles.infoCard}>
 
                     <div className={styles.rightSide}>
-                        <form>
+                        <form onSubmit={handleSubmit}>
                             <label>البريد الإلكتروني</label>
-                            <input type="email" placeholder="example@mail.com" />
+                            <input 
+                                type="email" 
+                                placeholder="example@mail.com"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                required
+                            />
                             
                             <div className={styles.passwordWrapper}>
                                 <label>كلمة المرور</label>
@@ -34,6 +77,9 @@ function Login() {
                             <input
                                 type={showPassword ? "text" : "password"}
                                 placeholder="••••••"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required
                             />
 
                             <a href="#" className={styles.forgotPassword}>نسيت كلمة المرور؟</a>
