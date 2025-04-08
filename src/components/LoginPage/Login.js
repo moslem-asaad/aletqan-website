@@ -10,6 +10,22 @@ function Login() {
     const [showPassword, setShowPassword] = useState(false);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [errorMessage, setErrorMessage] = useState("");
+
+    const translateError = (message) => {
+        const translations = {
+            "Invalid email or password": "البريد الإلكتروني أو كلمة المرور غير صحيحة",
+            "User not found": "المستخدم غير موجود",
+            "Incorrect password": "كلمة المرور غير صحيحة",
+            "Email is required": "البريد الإلكتروني مطلوب",
+            "Password is required": "كلمة المرور مطلوبة",
+            "Internal server error": "خطأ في الخادم الداخلي",
+        };
+    
+        return translations[message] || "حدث خطأ غير متوقع. الرجاء المحاولة لاحقًا.";
+    };
+
+
     const togglePassword = () => {
         setShowPassword(!showPassword);
     };
@@ -36,12 +52,19 @@ function Login() {
             console.log("نجح تسجيل الدخول:", result);
 
             localStorage.setItem("token", result.token);
+            localStorage.setItem("user", JSON.stringify({ role: result.role })); 
 
-            navigate("/"); // navigate to the relevant page when completed
+            const userType = result.role;
+            if(userType === "TEACHER")
+                navigate("/teacher");
+            else 
+            navigate("/student");
         } else {
             const error = await response.text();
             console.error("فشل الدخول:", error);
-            alert("فشل الدخول: " + error);
+
+            const translated = translateError(error);
+            setErrorMessage(translated);
         }
     } catch (error) {
         console.error("خطأ في الشبكة:", error);
@@ -57,6 +80,8 @@ function Login() {
 
                     <div className={styles.rightSide}>
                         <form onSubmit={handleSubmit}>
+                            {errorMessage && <p className={styles.errorMessage}>{errorMessage}</p>}
+
                             <label>البريد الإلكتروني</label>
                             <input 
                                 type="email" 

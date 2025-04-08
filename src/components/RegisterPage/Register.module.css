@@ -93,6 +93,12 @@
   margin-bottom: 7px;
 }
 
+.errorMessage {
+  color: red;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
 .passwordWrapper {
   display: flex;
   flex-direction: row;

@@ -17,6 +17,21 @@ function Register() {
     const [password, setPassword] = useState("");
     const [role, setRole] = useState("");
 
+    const [errorMessage, setErrorMessage] = useState("");
+    
+        const translateError = (message) => {
+            const translations = {
+                "Email already in use": "البريد الإلكتروني قيّد الإستخدام",
+                "Invalid email or password": "البريد الإلكتروني أو كلمة المرور غير صحيحة",
+                "User not found": "المستخدم غير موجود",
+                "Email is required": "البريد الإلكتروني مطلوب",
+                "Password is required": "كلمة المرور مطلوبة",
+                "Internal server error": "خطأ في الخادم الداخلي",
+            };
+        
+            return translations[message] || "حدث خطأ غير متوقع. الرجاء المحاولة لاحقًا.";
+        };
+
     const togglePassword = () => {
         setShowPassword(!showPassword);
     };
@@ -49,10 +64,13 @@ function Register() {
             } else {
                 const error = await response.text();
                 console.error("فشل التسجيل:", error);
-                alert("فشل التسجيل: " + error);
+
+                const translated = translateError(error);
+                setErrorMessage(translated);
             }
         } catch (error) {
             console.error("خطأ في الشبكة:", error);
+            const translated = translateError(error);
             alert("حدث خطأ أثناء التسجيل.");
         }
     };
@@ -65,6 +83,8 @@ function Register() {
 
                     <div className={styles.rightSide}>
                         <form onSubmit={handleSubmit}>
+                            {errorMessage && <p className={styles.errorMessage}>{errorMessage}</p>}
+                            
                             <label>الإسم الكامل</label>
                             <input 
                             type="text" 
