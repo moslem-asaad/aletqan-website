@@ -4,6 +4,7 @@ import Footer from "../HomePage/Footer";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import styles from "./Login.module.css";
+import { useAuth } from "../../context/AuthContext ";
 
 function Login() {
     const navigate = useNavigate();
@@ -11,6 +12,8 @@ function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
+    const { setUser } = useAuth();
+
 
     const translateError = (message) => {
         const translations = {
@@ -51,14 +54,20 @@ function Login() {
             const result = await response.json();
             console.log("نجح تسجيل الدخول:", result);
 
+            const userInfo = {
+                role: result.role,
+                userName: result.userName
+            };
+
             localStorage.setItem("token", result.token);
-            localStorage.setItem("user", JSON.stringify({ role: result.role })); 
+            localStorage.setItem("user", JSON.stringify(userInfo));
+            setUser(userInfo);
 
             const userType = result.role;
             if(userType === "TEACHER")
                 navigate("/teacher");
             else 
-            navigate("/student");
+                navigate("/student");
         } else {
             const error = await response.text();
             console.error("فشل الدخول:", error);

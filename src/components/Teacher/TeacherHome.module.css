@@ -1,0 +1,83 @@
+.TeacherHomePage {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    direction: rtl;
+  }
+  
+  .main {
+    flex: 1;
+    padding: 20px;
+    background-color: #003366;
+    color: white;
+  }
+  
+  .coursesSection .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .addCourseBtn {
+    background-color: #f6c301;
+    color: #003366;
+    font-weight: bold;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+  }
+  
+  .courseCards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 16px;
+    margin-top: 20px;
+  }
+  
+  .card {
+    background-color: #E9FFB6;
+    color: #003366;
+    border-radius: 40px;
+    padding-top: 12px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.6);
+    text-decoration: none;
+  }
+  
+  .courseIcon {
+    width: 70px;
+  }
+
+  .courseData{
+    background-color: white;
+    color: #003366;
+    border-radius: 12px;
+    padding: 0.5px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.6);
+  }
+  
+  .generalInfo {
+    margin-top: 40px;
+  }
+  
+  .infoCards {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  
+  .infoCard {
+    background-color: white;
+    color: #003366;
+    border-radius: 12px;
+    padding: 20px;
+    width: 180px;
+    text-align: center;
+  }
+
+  .teacher-footer {
+    background-color: #003366;
+  }
+  

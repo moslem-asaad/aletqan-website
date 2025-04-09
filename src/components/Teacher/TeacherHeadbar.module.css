@@ -1,0 +1,81 @@
+.headbar {
+  font-family: 'Cairo', sans-serif;
+  direction: rtl;
+}
+
+.top-bar {
+  background-color: #0067C8;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 10px 20px;
+  font-size: 14px;
+}
+
+
+.logo-logo{
+  height: 60px;
+  max-width: 100%;
+}
+
+.right-side {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 20px;
+  padding-right: 40px;
+  color: white;
+}
+
+.right-side a{
+  transition: transform 0.2s ease-in-out;
+}
+
+.right-side a:hover{
+  transform: scale(1.05);
+}
+
+
+.user-icon {
+  font-size: 28px;
+  color: white;
+}
+
+.user-icon:hover{
+  color: black;
+}
+
+.toggle-button{
+  display: none;
+}
+
+
+
+@media (max-width: 768px) {
+
+  .menu-button {
+    display: block;
+  }
+
+  .logo-logo {
+    height: 50px;
+  }
+
+  .top-bar {
+    flex-direction: row; 
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .logo {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  .logo img {
+    height: 50px;
+  }
+}
