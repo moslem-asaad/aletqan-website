@@ -20,18 +20,19 @@
   
   .addCourseBtn {
     background-color: #f6c301;
-    color: #003366;
+    color: white;
     font-weight: bold;
     padding: 10px 20px;
     border: none;
     border-radius: 12px;
     cursor: pointer;
+    font-size: 24px;
   }
   
   .courseCards {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 16px;
+    gap: 40px;
     margin-top: 20px;
   }
   
@@ -43,19 +44,39 @@
     text-align: center;
     box-shadow: 0 4px 8px rgba(0,0,0,0.6);
     text-decoration: none;
+    position: relative;
+    overflow: hidden;
   }
   
   .courseIcon {
     width: 70px;
   }
 
-  .courseData{
+  .courseData {
     background-color: white;
     color: #003366;
-    border-radius: 12px;
-    padding: 0.5px;
+    border-radius: 40px;
+    padding: 6px 10px;            
     text-align: center;
     box-shadow: 0 4px 8px rgba(0,0,0,0.6);
+    font-size: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;                     
+    box-sizing: border-box;
+    height: 90px;
+  }
+
+  .courseData h4 {
+    font-size: 16px;
+    margin: 6px 0 2px 0; 
+  }
+  
+  .courseData p {
+    font-size: 14px;
+    margin: 0;
   }
   
   .generalInfo {
@@ -76,6 +97,49 @@
     width: 180px;
     text-align: center;
   }
+
+
+  .editBtn {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: transparent;
+    color: #003366;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    gap: 4px;
+    font-weight: bold;
+  }
+  
+  .saveBtn {
+    background-color: #004aad;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 16px;
+  }
+  
+  .editInput {
+    width: 100%;
+    max-width: 90%;       
+    padding: 6px 10px;
+    font-size: 16px;
+    text-align: center;
+    border-radius: 12px;
+    border: 1px solid #ccc;
+    font-family: inherit;
+    box-sizing: border-box;
+  }
+  
 
   .teacher-footer {
     background-color: #003366;
