@@ -56,7 +56,8 @@ function Login() {
 
             const userInfo = {
                 role: result.role,
-                userName: result.userName
+                userName: result.userName,
+                userId: result.id
             };
 
             localStorage.setItem("token", result.token);

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import TeacherHeadbar from "./TeacherHeadbar";
 import Footer from "../HomePage/Footer";
 import styles from "./TeacherHome.module.css";
@@ -6,15 +6,48 @@ import { FaUsers, FaEdit, FaSave } from "react-icons/fa";
 import { GiBookshelf } from "react-icons/gi";
 import q2 from "../assets/q2.png";
 
-function TeacherHome() {
-  const [courses, setCourses] = useState([
-    { id: 1, name: "دورة التجويد 2", students: 4 },
-    { id: 2, name: "دورة التجويد الجديدة", students: 15 },
-    { id: 3, name: "دورة التجويد المتقدمة", students: 10 },
-  ]);
 
+
+const fetchCourses = async (id) =>{
+  try{
+    const token = localStorage.getItem("token");
+    const response = await fetch(`http://localhost:8090/api/courses/teacher/${id}`, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    return data;
+  }catch(error){
+    console.error("error feching courses: ", error);
+    throw error;
+  }
+}
+
+function TeacherHome() {
+  const [courses, setCourses] = useState([]);
   const [editingCourseId, setEditingCourseId] = useState(null);
   const [editedName, setEditedName] = useState("");
+
+
+  useEffect(() => {
+    const fetchData = async () => {
+        try {
+            const userInfoString = localStorage.getItem("user");
+            const userInfo = JSON.parse(userInfoString);
+            const courses = await fetchCourses(userInfo.userId);
+            setCourses(courses);
+        } catch (error) {
+            console.error('Error fetching job data:', error);
+        }
+    };
+
+    fetchData();
+}, []);
+
 
   const addCourse = () => {
     const newId = courses.length + 1;
