@@ -1,22 +1,18 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./TeacherHeadbar.module.css";
-import {
-  FaUserCircle,
-} from "react-icons/fa";
+import { FaUserCircle } from "react-icons/fa";
 import logo from '../assets/logo.png';
-import { useAuth } from "../../context/AuthContext ";
+import { useUserName } from "../../utils/useUserName";
 
 
 function TeacherHeadbar() {
-  const [userName,setUserName] = useState("الأستاذ مسلم أسعد")
-  const { user } = useAuth();
-
+  const userName = useUserName();
   return (
     <header className={styles.headbar}>
       <div className={styles["top-bar"]}>
         <div className={styles["right-side"]}>
           <a href="#"><FaUserCircle className={styles["user-icon"]} /></a>
-          <span>{user?.userName}</span>
+          <span>{userName}</span>
         </div>
 
         <a href="/">

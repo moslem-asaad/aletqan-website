@@ -5,16 +5,19 @@ import styles from "./TeacherHome.module.css";
 import { FaUsers, FaEdit, FaSave } from "react-icons/fa";
 import { GiBookshelf } from "react-icons/gi";
 import q2 from "../assets/q2.png";
+import { getAuthHeaders, getUserInfo } from '../../utils/auth';
+import { useNavigate } from "react-router-dom";
 
 
 
-const fetchCourses = async (id) =>{
+const user = getUserInfo();
+const headers = getAuthHeaders();
+
+const fetchCourses = async () =>{
   try{
-    const token = localStorage.getItem("token");
-    const response = await fetch(`http://localhost:8090/api/courses/teacher/${id}`, {
-      headers: {
-        "Authorization": `Bearer ${token}`
-      }
+    const response = await fetch(`http://localhost:8090/api/courses/teacher/${user.userId}`, {
+      method: 'GET',
+      headers
     });
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -27,7 +30,36 @@ const fetchCourses = async (id) =>{
   }
 }
 
+const editCourse = async (course) => {
+  try {
+    const response = await fetch(`http://localhost:8090/api/courses/teacher/${user.userId}/${course.id}`, {
+      method: 'PUT',
+      headers: {
+        ...headers,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        name: course.name,
+        schedule: course.schedule,
+        teacherId: user.userId,
+        studentIds: course.studentIds || []
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error editing course: ", error);
+    throw error;
+  }
+};
+
 function TeacherHome() {
+  const navigate = useNavigate();
   const [courses, setCourses] = useState([]);
   const [editingCourseId, setEditingCourseId] = useState(null);
   const [editedName, setEditedName] = useState("");
@@ -36,9 +68,7 @@ function TeacherHome() {
   useEffect(() => {
     const fetchData = async () => {
         try {
-            const userInfoString = localStorage.getItem("user");
-            const userInfo = JSON.parse(userInfoString);
-            const courses = await fetchCourses(userInfo.userId);
+            const courses = await fetchCourses();
             setCourses(courses);
         } catch (error) {
             console.error('Error fetching job data:', error);
@@ -48,6 +78,14 @@ function TeacherHome() {
     fetchData();
 }, []);
 
+
+  const displayNumStudents = (num) => {
+    if (num == 0) return (<p>لا يوجد طلاب</p>); 
+    else if (num  == 1) return (<p>طالب واحد</p>);
+    else if (num == 2) return (<p>طالبان </p>); 
+    else if (num <= 10) return (<p>{num} طلاب</p>); 
+    else return (<p>{num} طالب</p>);  
+  }
 
   const addCourse = () => {
     const newId = courses.length + 1;
@@ -62,13 +100,26 @@ function TeacherHome() {
     setEditedName(course.name);
   };
 
-  const saveEditedName = (id) => {
-    const updatedCourses = courses.map(course =>
-      course.id === id ? { ...course, name: editedName } : course
-    );
-    setCourses(updatedCourses);
-    setEditingCourseId(null);
-    setEditedName("");
+  const saveEditedName = async (id) => {
+    const courseToEdit = courses.find(course => course.id === id);
+    const updatedCourse = {
+      ...courseToEdit,
+      name: editedName,
+      teacherId: user.userId,
+    };
+
+    try{
+      const result = await editCourse(updatedCourse);
+      const updatedCourses = courses.map(course =>
+        course.id === id ? result : course
+      );
+      setCourses(updatedCourses);
+      setEditingCourseId(null);
+      setEditedName("");
+    }catch (err) {
+      console.error("Failed to update course", err);
+    }
+    
   };
 
   const totalStudents = courses.reduce((sum, course) => sum + course.students, 0);
@@ -87,10 +138,22 @@ function TeacherHome() {
 
           <div className={styles.courseCards}>
             {courses.map((course) => (
-              <div key={course.id} className={styles.card}>
+              <div
+              key={course.id}
+              className={styles.card}
+              onClick={() => {
+                if (editingCourseId !== course.id) {
+                  navigate(`/teacher/course/${course.id}`);
+                }
+              }}
+              style={{ cursor: editingCourseId !== course.id ? 'pointer' : 'default' }}
+            >
               <button
                 className={styles.editBtn}
-                onClick={() => startEditing(course)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  startEditing(course);
+                }}
               >
                 <FaEdit />
               </button>
@@ -107,7 +170,10 @@ function TeacherHome() {
                       className={styles.editInput}
                     />
                     <button
-                      onClick={() => saveEditedName(course.id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        saveEditedName(course.id);
+                      }}
                       className={styles.saveBtn}
                     >
                       <FaSave /> حفظ
@@ -116,7 +182,7 @@ function TeacherHome() {
                 ) : (
                   <>
                     <h4>{course.name}</h4>
-                    <p>{course.students} طلاب</p>
+                   {displayNumStudents(course.students)} 
                   </>
                 )}
               </div>            

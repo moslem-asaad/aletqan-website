@@ -1,5 +1,5 @@
 // AuthContext.js
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState , useMemo } from "react";
 
 const AuthContext = createContext();
 
@@ -17,3 +17,18 @@ export const AuthProvider = ({ children }) => {
 };
 
 export const useAuth = () => useContext(AuthContext);
+
+export const GetUserName = () => {
+  const { user } = useAuth();
+
+  const userName = useMemo(() => {
+    console.log("Gender value is:", `"${user.gender}"`);
+    if (user.gender === "MALE") {
+      return " الأستاذ " + user.name;
+    } else {
+      return " المعلمة " + user.name;
+    }
+  }, [user.gender, user.name]);
+
+  return userName; 
+};

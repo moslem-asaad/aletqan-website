@@ -6,6 +6,8 @@ import Register from './components/RegisterPage/Register';
 import TeacherHome from './components/Teacher/TeacherHome';
 import ProtectedRoute from './components/ProtectedRoute'; 
 import { AuthProvider } from './context/AuthContext ';
+import TeacherCourseDetails from './components/Teacher/TeacherCourseDetails';
+
 
 
 
@@ -22,6 +24,10 @@ function App() {
           <Route
             path="/teacher"
             element={<ProtectedRoute element={TeacherHome} allowedRole="TEACHER" />}
+          />
+          <Route
+            path="/teacher/course/:id"
+            element={<ProtectedRoute element={TeacherCourseDetails} allowedRole="TEACHER" />}
           />
         </Routes>
       </Router>

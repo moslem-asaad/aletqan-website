@@ -9,7 +9,7 @@ import { useAuth } from "../../context/AuthContext ";
 function Login() {
     const navigate = useNavigate();
     const [showPassword, setShowPassword] = useState(false);
-    const [email, setEmail] = useState("");
+    const [identifier, setIdentifier] = useState("");
     const [password, setPassword] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
     const { setUser } = useAuth();
@@ -17,7 +17,7 @@ function Login() {
 
     const translateError = (message) => {
         const translations = {
-            "Invalid email or password": "البريد الإلكتروني أو كلمة المرور غير صحيحة",
+            "Invalid email or password": "المستخدم أو كلمة المرور غير صحيحة",
             "User not found": "المستخدم غير موجود",
             "Incorrect password": "كلمة المرور غير صحيحة",
             "Email is required": "البريد الإلكتروني مطلوب",
@@ -37,7 +37,7 @@ function Login() {
     e.preventDefault();
 
     const data = {
-        email,
+        identifier,
         password,
     };
 
@@ -56,8 +56,10 @@ function Login() {
 
             const userInfo = {
                 role: result.role,
+                name: result.name,
                 userName: result.userName,
-                userId: result.id
+                userId: result.id,
+                gender: result.gender
             };
 
             localStorage.setItem("token", result.token);
@@ -92,12 +94,12 @@ function Login() {
                         <form onSubmit={handleSubmit}>
                             {errorMessage && <p className={styles.errorMessage}>{errorMessage}</p>}
 
-                            <label>البريد الإلكتروني</label>
+                            <label>اسم المستخدم أو البريد الإلكتروني</label>
                             <input 
-                                type="email" 
-                                placeholder="example@mail.com"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
+                                type="text" 
+                                placeholder="اسم المستخدم أو example@mail.com"
+                                value={identifier}
+                                onChange={(e) => setIdentifier(e.target.value)}
                                 required
                             />
                             
