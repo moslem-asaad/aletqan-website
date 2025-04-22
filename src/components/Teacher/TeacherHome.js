@@ -41,8 +41,7 @@ const editCourse = async (course) => {
       body: JSON.stringify({
         name: course.name,
         schedule: course.schedule,
-        teacherId: user.userId,
-        studentIds: course.studentIds || []
+        teacherId: course.teacherId,
       })
     });
 
@@ -80,9 +79,9 @@ function TeacherHome() {
 
 
   const displayNumStudents = (num) => {
-    if (num == 0) return (<p>لا يوجد طلاب</p>); 
-    else if (num  == 1) return (<p>طالب واحد</p>);
-    else if (num == 2) return (<p>طالبان </p>); 
+    if (num === 0) return (<p>لا يوجد طلاب</p>); 
+    else if (num === 1) return (<p>طالب واحد</p>);
+    else if (num === 2) return (<p>طالبان </p>); 
     else if (num <= 10) return (<p>{num} طلاب</p>); 
     else return (<p>{num} طالب</p>);  
   }
@@ -122,7 +121,7 @@ function TeacherHome() {
     
   };
 
-  const totalStudents = courses.reduce((sum, course) => sum + course.students, 0);
+  const totalStudents = courses.reduce((sum, course) => sum + course.numOfStudents, 0);
 
   return (
     <div className={styles.TeacherHomePage}>
@@ -143,7 +142,9 @@ function TeacherHome() {
               className={styles.card}
               onClick={() => {
                 if (editingCourseId !== course.id) {
-                  navigate(`/teacher/course/${course.id}`);
+                  navigate(`/teacher/course/${course.id}`, {
+                    state: { course }
+                  });
                 }
               }}
               style={{ cursor: editingCourseId !== course.id ? 'pointer' : 'default' }}
@@ -182,7 +183,7 @@ function TeacherHome() {
                 ) : (
                   <>
                     <h4>{course.name}</h4>
-                   {displayNumStudents(course.students)} 
+                   {displayNumStudents(course.numOfStudents)} 
                   </>
                 )}
               </div>            
