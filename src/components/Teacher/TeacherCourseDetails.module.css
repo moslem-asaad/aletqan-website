@@ -1,0 +1,169 @@
+.TeacherCourseDetails {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    direction: rtl;
+    background-color: #001f3f;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #f0f0f0;
+  }
+  
+  .main {
+    flex: 1;
+    padding: 40px 20px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  
+  h2, h3 {
+    color: #00c2ff;
+    margin-bottom: 16px;
+  }
+  
+  p {
+    line-height: 1.6;
+  }
+  
+  ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  li {
+    background-color: #002b55;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    transition: transform 0.2s ease;
+  }
+  
+  li:hover {
+    transform: translateY(-4px);
+  }
+  
+  li ul {
+    margin-top: 12px;
+    padding-left: 20px;
+  }
+  
+  li ul li {
+    background: transparent;
+    padding: 6px 0;
+    margin-bottom: 6px;
+    box-shadow: none;
+  }
+  
+  a {
+    color: #00c2ff;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  
+  a:hover {
+    color: #66d9ff;
+    text-decoration: underline;
+  }
+
+
+.fieldRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #002c4f;
+    padding: 16px;
+    margin: 16px 0;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  
+  .fieldRow p {
+    font-size: 1.1rem;
+    margin: 0;
+    color: #ffffff;
+    flex: 1;
+  }
+  
+  .editLabel {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    font-size: 1rem;
+    color: #ffffff;
+  }
+  
+  .inputField {
+    padding: 10px;
+    font-size: 1rem;
+    border-radius: 8px;
+    border: none;
+    width: 100%;
+    background-color: #ffffff;
+    color: #111;
+  }
+  
+  .editButton,
+  .saveButton,
+  .cancelButton {
+    padding: 8px 14px;
+    font-size: 0.95rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .editButton {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  .editButton:hover {
+    background-color: #005ecb;
+  }
+  
+  .saveButton {
+    background-color: #28a745;
+    color: white;
+  }
+  
+  .saveButton:hover {
+    background-color: #218838;
+  }
+  
+  .cancelButton {
+    background-color: #dc3545;
+    color: white;
+  }
+  
+  .cancelButton:hover {
+    background-color: #c82333;
+  }
+  
+  .buttonGroup {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  
+  .teacher-footer {
+    background-color: #001a33;
+    padding: 20px;
+    text-align: center;
+    color: #ccc;
+  }
+  
+
+  @media (max-width: 600px) {
+    .main {
+      padding: 20px 10px;
+    }
+  
+    li {
+      padding: 16px;
+    }
+  }
+  
