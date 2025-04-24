@@ -7,28 +7,28 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     color: #f0f0f0;
   }
-  
+
   .main {
     flex: 1;
     padding: 40px 20px;
     max-width: 900px;
     margin: 0 auto;
   }
-  
+
   h2, h3 {
     color: #00c2ff;
     margin-bottom: 16px;
   }
-  
+
   p {
     line-height: 1.6;
   }
-  
+
   ul {
     list-style: none;
     padding: 0;
   }
-  
+
   li {
     background-color: #002b55;
     padding: 20px;
@@ -37,36 +37,35 @@
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
     transition: transform 0.2s ease;
   }
-  
+
   li:hover {
     transform: translateY(-4px);
   }
-  
+
   li ul {
     margin-top: 12px;
     padding-left: 20px;
   }
-  
+
   li ul li {
     background: transparent;
     padding: 6px 0;
     margin-bottom: 6px;
     box-shadow: none;
   }
-  
+
   a {
     color: #00c2ff;
     text-decoration: none;
     transition: color 0.2s ease;
   }
-  
+
   a:hover {
     color: #66d9ff;
     text-decoration: underline;
   }
 
-
-.fieldRow {
+  .fieldRow {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -78,14 +77,14 @@
     flex-wrap: wrap;
     gap: 12px;
   }
-  
+
   .fieldRow p {
     font-size: 1.1rem;
     margin: 0;
     color: #ffffff;
     flex: 1;
   }
-  
+
   .editLabel {
     display: flex;
     align-items: center;
@@ -94,7 +93,7 @@
     font-size: 1rem;
     color: #ffffff;
   }
-  
+
   .inputField {
     padding: 10px;
     font-size: 1rem;
@@ -104,7 +103,7 @@
     background-color: #ffffff;
     color: #111;
   }
-  
+
   .editButton,
   .saveButton,
   .cancelButton {
@@ -115,55 +114,195 @@
     cursor: pointer;
     transition: background-color 0.3s ease;
   }
-  
+
   .editButton {
     background-color: #007bff;
     color: white;
   }
-  
+
   .editButton:hover {
     background-color: #005ecb;
   }
-  
+
   .saveButton {
     background-color: #28a745;
     color: white;
   }
-  
+
   .saveButton:hover {
     background-color: #218838;
   }
-  
+
   .cancelButton {
     background-color: #dc3545;
     color: white;
   }
-  
+
   .cancelButton:hover {
     background-color: #c82333;
   }
-  
+
   .buttonGroup {
     display: flex;
     gap: 10px;
     margin-top: 10px;
   }
-  
+
+  .resourceForm {
+    background-color: #002a4e;
+    padding: 20px;
+    margin-top: 16px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  .resourceForm h4 {
+    color: #00c2ff;
+    margin-bottom: 8px;
+  }
+
+  .resourceForm input,
+  .resourceForm select {
+    padding: 10px;
+    border-radius: 6px;
+    border: none;
+    font-size: 1rem;
+    background-color: #ffffff;
+    color: #111;
+  }
+
+  .resourceForm select {
+    cursor: pointer;
+  }
+
+  .resourceForm label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #f0f0f0;
+    font-size: 0.95rem;
+  }
+
+  .resourceForm button {
+    align-self: flex-start;
+    padding: 8px 16px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 6px;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .resourceForm button:hover {
+    background-color: #005ecb;
+  }
+
+  .editResourceForm {
+    background-color: #012b52;
+    padding: 12px;
+    margin-top: 10px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .editResourceForm input,
+  .editResourceForm select {
+    padding: 8px;
+    border-radius: 6px;
+    border: none;
+    font-size: 0.95rem;
+    background-color: #fff;
+    color: #111;
+  }
+
+  .editResourceForm label {
+    color: #eee;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .editResourceForm button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 12px;
+    cursor: pointer;
+  }
+
+  .editResourceForm button:hover {
+    background-color: #1e7e34;
+  }
+
+  .resourceActions {
+    display: flex;
+    gap: 8px;
+    margin-top: 6px;
+  }
+
+  .resourceActions button {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    cursor: pointer;
+  }
+
+  .resourceActions .delete {
+    background-color: #dc3545;
+    color: white;
+  }
+
+  .resourceActions .delete:hover {
+    background-color: #c82333;
+  }
+
+  .resourceActions .edit {
+    background-color: #ffc107;
+    color: #111;
+  }
+
+  .resourceActions .edit:hover {
+    background-color: #e0a800;
+  }
+
+  .addButton {
+    background-color: #17a2b8;
+    color: white;
+    padding: 8px 14px;
+    font-size: 0.95rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .addButton:hover {
+    background-color: #138496;
+  }
+
   .teacher-footer {
     background-color: #001a33;
     padding: 20px;
     text-align: center;
     color: #ccc;
   }
-  
 
   @media (max-width: 600px) {
     .main {
       padding: 20px 10px;
     }
-  
+
     li {
       padding: 16px;
     }
   }
-  

@@ -85,6 +85,106 @@ function TeacherCourseDetails() {
   const [editingField, setEditingField] = useState(null);
   const [editedValue, setEditedValue] = useState("");
 
+  const [newResources, setNewResources] = useState({});
+const [activeLessonId, setActiveLessonId] = useState(null);
+const [editingLessonId, setEditingLessonId] = useState(null);
+const [resourceEditStates, setResourceEditStates] = useState({});
+
+  const toggleResourceForm = (lessonId) => {
+    setActiveLessonId(prev => prev === lessonId ? null : lessonId);
+  };
+
+  const toggleEditResources = (lessonId) => {
+    setEditingLessonId(prev => prev === lessonId ? null : lessonId);
+  };
+
+  const handleResourceChange = (e, lessonId) => {
+    const { name, value, type, checked } = e.target;
+    setNewResources(prev => ({
+      ...prev,
+      [lessonId]: {
+        ...prev[lessonId],
+        [name]: type === 'checkbox' ? checked : value
+      }
+    }));
+  };
+
+  const handleEditResourceChange = (e, resourceId) => {
+    const { name, value, type, checked } = e.target;
+    setResourceEditStates(prev => ({
+      ...prev,
+      [resourceId]: {
+        ...prev[resourceId],
+        [name]: type === 'checkbox' ? checked : value
+      }
+    }));
+  };
+
+  const confirmAndDeleteResource = async (resourceId, lessonId) => {
+    if (!window.confirm('هل أنت متأكد أنك تريد حذف هذا المورد؟')) return;
+    try {
+      const response = await fetch(`http://localhost:8090/api/lessons/resources/${resourceId}`, {
+        method: 'DELETE',
+        headers
+      });
+      if (!response.ok) throw new Error("فشل الحذف");
+      toast.success("🗑️ تم حذف المورد بنجاح!");
+      setLessons(prev => prev.map(lesson =>
+        lesson.id === lessonId
+          ? { ...lesson, resources: lesson.resources.filter(r => r.id !== resourceId) }
+          : lesson
+      ));
+    } catch (err) {
+      toast.error(err.message || '❌ فشل الحذف');
+    }
+  };
+
+  const confirmAndUpdateResource = async (resourceId, lessonId) => {
+    if (!window.confirm('هل تريد حفظ التعديلات؟')) return;
+    try {
+      const response = await fetch(`http://localhost:8090/api/lessons/resources/${resourceId}`, {
+        method: 'PUT',
+        headers: {
+          ...headers,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(resourceEditStates[resourceId])
+      });
+      if (!response.ok) throw new Error("فشل التحديث");
+      const updatedLesson = await response.json();
+      toast.success("✏️ تم تحديث المورد بنجاح!");
+      setLessons(prev => prev.map(l => l.id === lessonId ? updatedLesson : l));
+      setResourceEditStates(prev => ({ ...prev, [resourceId]: undefined }));
+    } catch (err) {
+      toast.error(err.message || '❌ فشل التحديث');
+    }
+  };
+
+  const addResourceToLesson = async (lessonId) => {
+    try {
+      const resourceData = newResources[lessonId];
+      const response = await fetch(`http://localhost:8090/api/lessons/${lessonId}/resources`, {
+        method: 'POST',
+        headers: {
+          ...headers,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(resourceData)
+      });
+
+      if (!response.ok) throw new Error("فشل إضافة المورد");
+      const updatedLesson = await response.json();
+      toast.success("✅ تم إضافة المورد بنجاح!");
+      setLessons(prev =>
+        prev.map(l => l.id === lessonId ? updatedLesson : l)
+      );
+      setActiveLessonId(null);
+      setNewResources(prev => ({ ...prev, [lessonId]: {} }));
+    } catch (err) {
+      toast.error(err.message || '❌ فشل في الإضافة');
+    }
+  };
+
   useEffect(() => {
     if (!course) {
       const fetchData = async () => {
@@ -128,13 +228,13 @@ function TeacherCourseDetails() {
   const handleEditSubmit = async () => {
     const trimmed = editedValue.trim().toLowerCase();
     const original = course[editingField].trim().toLowerCase();
-  
+
     if (trimmed === original) {
       toast.info("ℹ️ لا يوجد تغيير للحفظ.");
       setEditingField(null);
       return;
     }
-  
+
     try {
       const updated = await editCourse(user.userId, id, {
         [editingField]: editedValue.trim(),
@@ -147,7 +247,7 @@ function TeacherCourseDetails() {
       toast.error(err.message || '❌ فشل التحديث');
     }
   };
-  
+
 
   return (
     <div className={styles.TeacherCourseDetails}>
@@ -233,9 +333,65 @@ function TeacherCourseDetails() {
                     ) : (
                       <p style={{ fontStyle: "italic", marginTop: "8px" }}>لا توجد موارد لهذا الدرس.</p>
                     )}
+
+                    {activeLessonId === lesson.id && (
+                      <div className={styles.resourceForm}>
+                        <h4>إضافة مورد جديد</h4>
+                        <input
+                          type="text"
+                          name="name"
+                          placeholder="اسم المورد"
+                          value={newResources[lesson.id]?.name || ''}
+                          onChange={(e) => handleResourceChange(e, lesson.id)}
+                        />
+                        <input
+                          type="text"
+                          name="url"
+                          placeholder="الرابط الكامل"
+                          value={newResources[lesson.id]?.url || ''}
+                          onChange={(e) => handleResourceChange(e, lesson.id)}
+                        />
+                        <input
+                          type="text"
+                          name="urlShort"
+                          placeholder="رابط مختصر"
+                          value={newResources[lesson.id]?.urlShort || ''}
+                          onChange={(e) => handleResourceChange(e, lesson.id)}
+                        />
+                        <select
+                          name="type"
+                          value={newResources[lesson.id]?.type || 'PDF'}
+                          onChange={(e) => handleResourceChange(e, lesson.id)}
+                        >
+                          <option value="PDF">PDF</option>
+                          <option value="IMAGE">صورة</option>
+                          <option value="VIDEO">فيديو</option>
+                          <option value="LINK">رابط</option>
+                        </select>
+                        <label>
+                          <input
+                            type="checkbox"
+                            name="internal"
+                            checked={newResources[lesson.id]?.internal || false}
+                            onChange={(e) => handleResourceChange(e, lesson.id)}
+                          />
+                          داخلي؟
+                        </label>
+                        <button onClick={() => addResourceToLesson(lesson.id)}>➕ أضف المورد</button>
+                      </div>
+                    )}
+                    <button
+                      onClick={() => toggleResourceForm(lesson.id)}
+                      className={activeLessonId === lesson.id ? styles.cancelButton : styles.addButton}
+                    >
+                      {activeLessonId === lesson.id ? '❌ إلغاء' : '➕ إضافة مورد'}
+                    </button>
+
+
                   </li>
                 ))}
               </ul>
+
             )}
           </>
         )}
