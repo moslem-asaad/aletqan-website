@@ -6,6 +6,8 @@ import styles from "./TeacherCourseDetails.module.css";
 import { getAuthHeaders, getUserInfo } from '../../utils/auth';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import TeacherLessons from '../Lesson/TeacherLessons';
+
 
 const headers = getAuthHeaders();
 
@@ -308,91 +310,9 @@ const [resourceEditStates, setResourceEditStates] = useState({});
             )}
 
             <p><strong>👥 عدد الطلاب:</strong> {course.numOfStudents}</p>
-            <h3 style={{ marginTop: "20px" }}>📚 الدروس</h3>
-            {lessonsLoading && <p>جاري تحميل الدروس...</p>}
-            {lessonsError && <p style={{ color: 'red' }}>{lessonsError}</p>}
-
-            {!lessonsLoading && lessons.length === 0 && <p>لا توجد دروس لهذه الدورة.</p>}
-
-            {!lessonsLoading && lessons.length > 0 && (
-              <ul>
-                {lessons.map((lesson, index) => (
-                  <li key={index} className={styles.lessonCard}>
-                    <strong>{lesson.title}</strong><br />
-                    <span>{lesson.description}</span>
-
-                    {lesson.resources && lesson.resources.length > 0 ? (
-                      <ul>
-                        {lesson.resources.map((res, i) => (
-                          <li key={i}>
-                            📁 <strong>{res.name}</strong><br />
-                            🔗 <a href={res.url} target="_blank" rel="noopener noreferrer">{res.urlShort}</a><br />
-                          </li>
-                        ))}
-                      </ul>
-                    ) : (
-                      <p style={{ fontStyle: "italic", marginTop: "8px" }}>لا توجد موارد لهذا الدرس.</p>
-                    )}
-
-                    {activeLessonId === lesson.id && (
-                      <div className={styles.resourceForm}>
-                        <h4>إضافة مورد جديد</h4>
-                        <input
-                          type="text"
-                          name="name"
-                          placeholder="اسم المورد"
-                          value={newResources[lesson.id]?.name || ''}
-                          onChange={(e) => handleResourceChange(e, lesson.id)}
-                        />
-                        <input
-                          type="text"
-                          name="url"
-                          placeholder="الرابط الكامل"
-                          value={newResources[lesson.id]?.url || ''}
-                          onChange={(e) => handleResourceChange(e, lesson.id)}
-                        />
-                        <input
-                          type="text"
-                          name="urlShort"
-                          placeholder="رابط مختصر"
-                          value={newResources[lesson.id]?.urlShort || ''}
-                          onChange={(e) => handleResourceChange(e, lesson.id)}
-                        />
-                        <select
-                          name="type"
-                          value={newResources[lesson.id]?.type || 'PDF'}
-                          onChange={(e) => handleResourceChange(e, lesson.id)}
-                        >
-                          <option value="PDF">PDF</option>
-                          <option value="IMAGE">صورة</option>
-                          <option value="VIDEO">فيديو</option>
-                          <option value="LINK">رابط</option>
-                        </select>
-                        <label>
-                          <input
-                            type="checkbox"
-                            name="internal"
-                            checked={newResources[lesson.id]?.internal || false}
-                            onChange={(e) => handleResourceChange(e, lesson.id)}
-                          />
-                          داخلي؟
-                        </label>
-                        <button onClick={() => addResourceToLesson(lesson.id)}>➕ أضف المورد</button>
-                      </div>
-                    )}
-                    <button
-                      onClick={() => toggleResourceForm(lesson.id)}
-                      className={activeLessonId === lesson.id ? styles.cancelButton : styles.addButton}
-                    >
-                      {activeLessonId === lesson.id ? '❌ إلغاء' : '➕ إضافة مورد'}
-                    </button>
-
-
-                  </li>
-                ))}
-              </ul>
-
-            )}
+            
+            {<TeacherLessons id={id} course={course} />}
+            
           </>
         )}
       </div>
