@@ -3,6 +3,8 @@ import styles from "./TeacherLessons.module.css";
 import { getAuthHeaders, getUserInfo } from '../../utils/auth';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Lesson from './Lesson';
+
 
 
 const headers = getAuthHeaders();
@@ -26,12 +28,27 @@ const fetchLessons = async (teacherId, courseId) => {
     }
 };
 
-function TeacherLessons({id,course}) {
+function TeacherLessons({ id, course }) {
     const [lessons, setLessons] = useState([]);
     const [lessonsLoading, setLessonsLoading] = useState(true);
     const [lessonsError, setLessonsError] = useState(null);
     const [newResources, setNewResources] = useState({});
     const [activeLessonId, setActiveLessonId] = useState(null);
+
+    const updateLesson = (updatedLesson) => {
+        setLessons(prevLessons =>
+            prevLessons.map(l => (l.id === updatedLesson.id ? updatedLesson : l))
+        );
+    };
+
+    const deleteResource = (resourceId,lessonId) => {
+        setLessons(prev => prev.map(lesson =>
+            lesson.id === lessonId
+                ? { ...lesson, resources: lesson.resources.filter(r => r.id !== resourceId) }
+                : lesson
+        ));
+    }
+
 
     const toggleResourceForm = (lessonId) => {
         setActiveLessonId(prev => prev === lessonId ? null : lessonId);
@@ -107,78 +124,8 @@ function TeacherLessons({id,course}) {
                 {!lessonsLoading && lessons.length > 0 && (
                     <ul>
                         {lessons.map((lesson, index) => (
-                            <li key={index} className={styles.lessonCard}>
-                                <strong>{lesson.title}</strong><br />
-                                <span>{lesson.description}</span>
+                            <Lesson  key={lesson.id || index} lesson={lesson} index={index} onLessonUpdate={updateLesson} onResourceDeleted={deleteResource} />
 
-                                {lesson.resources && lesson.resources.length > 0 ? (
-                                    <ul>
-                                        {lesson.resources.map((res, i) => (
-                                            <li key={i}>
-                                                📁 <strong>{res.name}</strong><br />
-                                                🔗 <a href={res.url} target="_blank" rel="noopener noreferrer">{res.urlShort}</a><br />
-                                            </li>
-                                        ))}
-                                    </ul>
-                                ) : (
-                                    <p style={{ fontStyle: "italic", marginTop: "8px" }}>لا توجد موارد لهذا الدرس.</p>
-                                )}
-
-                                {activeLessonId === lesson.id && (
-                                    <div className={styles.resourceForm}>
-                                        <h4>إضافة مورد جديد</h4>
-                                        <input
-                                            type="text"
-                                            name="name"
-                                            placeholder="اسم المورد"
-                                            value={newResources[lesson.id]?.name || ''}
-                                            onChange={(e) => handleResourceChange(e, lesson.id)}
-                                        />
-                                        <input
-                                            type="text"
-                                            name="url"
-                                            placeholder="الرابط الكامل"
-                                            value={newResources[lesson.id]?.url || ''}
-                                            onChange={(e) => handleResourceChange(e, lesson.id)}
-                                        />
-                                        <input
-                                            type="text"
-                                            name="urlShort"
-                                            placeholder="رابط مختصر"
-                                            value={newResources[lesson.id]?.urlShort || ''}
-                                            onChange={(e) => handleResourceChange(e, lesson.id)}
-                                        />
-                                        <select
-                                            name="type"
-                                            value={newResources[lesson.id]?.type || 'PDF'}
-                                            onChange={(e) => handleResourceChange(e, lesson.id)}
-                                        >
-                                            <option value="PDF">PDF</option>
-                                            <option value="IMAGE">صورة</option>
-                                            <option value="VIDEO">فيديو</option>
-                                            <option value="LINK">رابط</option>
-                                        </select>
-                                        <label>
-                                            <input
-                                                type="checkbox"
-                                                name="internal"
-                                                checked={newResources[lesson.id]?.internal || false}
-                                                onChange={(e) => handleResourceChange(e, lesson.id)}
-                                            />
-                                            داخلي؟
-                                        </label>
-                                        <button onClick={() => addResourceToLesson(lesson.id)}>➕ أضف المورد</button>
-                                    </div>
-                                )}
-                                <button
-                                    onClick={() => toggleResourceForm(lesson.id)}
-                                    className={activeLessonId === lesson.id ? styles.cancelButton : styles.addButton}
-                                >
-                                    {activeLessonId === lesson.id ? '❌ إلغاء' : '➕ إضافة مورد'}
-                                </button>
-
-
-                            </li>
                         ))}
                     </ul>
 
