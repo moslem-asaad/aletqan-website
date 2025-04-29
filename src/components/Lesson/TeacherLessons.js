@@ -4,6 +4,8 @@ import { getAuthHeaders, getUserInfo } from '../../utils/auth';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Lesson from './Lesson';
+import { server } from '../../utils/constants';
+
 
 
 
@@ -11,7 +13,7 @@ const headers = getAuthHeaders();
 
 const fetchLessons = async (teacherId, courseId) => {
     try {
-        const response = await fetch(`http://localhost:8090/api/lessons/teacher/${teacherId}/${courseId}`, {
+        const response = await fetch(`${server}/api/lessons/teacher/${teacherId}/${courseId}`, {
             method: 'GET',
             headers
         });
@@ -48,49 +50,6 @@ function TeacherLessons({ id, course }) {
                 : lesson
         ));
     }
-
-
-    const toggleResourceForm = (lessonId) => {
-        setActiveLessonId(prev => prev === lessonId ? null : lessonId);
-    };
-
-
-    const handleResourceChange = (e, lessonId) => {
-        const { name, value, type, checked } = e.target;
-        setNewResources(prev => ({
-            ...prev,
-            [lessonId]: {
-                ...prev[lessonId],
-                [name]: type === 'checkbox' ? checked : value
-            }
-        }));
-    };
-
-    const addResourceToLesson = async (lessonId) => {
-        try {
-            const resourceData = newResources[lessonId];
-            const response = await fetch(`http://localhost:8090/api/lessons/${lessonId}/resources`, {
-                method: 'POST',
-                headers: {
-                    ...headers,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(resourceData)
-            });
-
-            if (!response.ok) throw new Error("فشل إضافة المورد");
-            const updatedLesson = await response.json();
-            toast.success("✅ تم إضافة المورد بنجاح!");
-            setLessons(prev =>
-                prev.map(l => l.id === lessonId ? updatedLesson : l)
-            );
-            setActiveLessonId(null);
-            setNewResources(prev => ({ ...prev, [lessonId]: {} }));
-        } catch (err) {
-            toast.error(err.message || '❌ فشل في الإضافة');
-        }
-    };
-
 
     const user = getUserInfo();
 

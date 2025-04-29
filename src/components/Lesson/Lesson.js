@@ -5,6 +5,8 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import EditResourceModal from './EditResourceModal';
 import AddResourceModal from './AddResourceModal';
+import { server } from '../../utils/constants';
+
 
 
 
@@ -24,7 +26,7 @@ function Lesson({ lesson, index, onLessonUpdate, onResourceDeleted }) {
     const addResourceToLesson = async (lessonId) => {
         try {
             const resourceData = addFormData;
-            const response = await fetch(`http://localhost:8090/api/lessons/${lessonId}/resources`, {
+            const response = await fetch(`${server}/api/lessons/${lessonId}/resources`, {
                 method: 'POST',
                 headers: {
                     ...headers,
@@ -48,7 +50,7 @@ function Lesson({ lesson, index, onLessonUpdate, onResourceDeleted }) {
     const confirmAndDeleteResource = async (resourceId, lessonId) => {
         if (!window.confirm('هل أنت متأكد أنك تريد حذف هذا المورد؟')) return;
         try {
-            const response = await fetch(`http://localhost:8090/api/lessons/resources/${resourceId}`, {
+            const response = await fetch(`${server}/api/lessons/resources/${resourceId}`, {
                 method: 'DELETE',
                 headers
             });
@@ -77,7 +79,7 @@ function Lesson({ lesson, index, onLessonUpdate, onResourceDeleted }) {
         if (!window.confirm('هل تريد حفظ التعديلات؟')) return;
     
         try {
-            const response = await fetch(`http://localhost:8090/api/lessons/resources/${editingResource.id}`, {
+            const response = await fetch(`${server}/api/lessons/resources/${editingResource.id}`, {
                 method: 'PUT',
                 headers: {
                     ...headers,

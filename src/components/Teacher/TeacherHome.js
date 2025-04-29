@@ -7,15 +7,16 @@ import { GiBookshelf } from "react-icons/gi";
 import q2 from "../assets/q2.png";
 import { getAuthHeaders, getUserInfo } from '../../utils/auth';
 import { useNavigate } from "react-router-dom";
+import { server } from '../../utils/constants';
 
 
 
-const user = getUserInfo();
+
 const headers = getAuthHeaders();
 
-const fetchCourses = async () =>{
+const fetchCourses = async (userId) =>{
   try{
-    const response = await fetch(`http://localhost:8090/api/courses/teacher/${user.userId}`, {
+    const response = await fetch(`${server}/api/courses/teacher/${userId}`, {
       method: 'GET',
       headers
     });
@@ -30,9 +31,9 @@ const fetchCourses = async () =>{
   }
 }
 
-const editCourse = async (course) => {
+const editCourse = async (userId,course) => {
   try {
-    const response = await fetch(`http://localhost:8090/api/courses/teacher/${user.userId}/${course.id}`, {
+    const response = await fetch(`${server}/api/courses/teacher/${userId}/${course.id}`, {
       method: 'PUT',
       headers: {
         ...headers,
@@ -62,12 +63,18 @@ function TeacherHome() {
   const [courses, setCourses] = useState([]);
   const [editingCourseId, setEditingCourseId] = useState(null);
   const [editedName, setEditedName] = useState("");
+  const [user, setUser] = useState(null);
 
+  useEffect(() => {
+    const currentUser = getUserInfo();
+    setUser(currentUser);
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
+      if(!user) return;
         try {
-            const courses = await fetchCourses();
+            const courses = await fetchCourses(user.userId);
             setCourses(courses);
         } catch (error) {
             console.error('Error fetching job data:', error);
@@ -75,7 +82,7 @@ function TeacherHome() {
     };
 
     fetchData();
-}, []);
+}, [user]);
 
 
   const displayNumStudents = (num) => {
@@ -100,6 +107,7 @@ function TeacherHome() {
   };
 
   const saveEditedName = async (id) => {
+    if (!user) return;
     const courseToEdit = courses.find(course => course.id === id);
     const updatedCourse = {
       ...courseToEdit,
@@ -108,7 +116,7 @@ function TeacherHome() {
     };
 
     try{
-      const result = await editCourse(updatedCourse);
+      const result = await editCourse(user.userId,updatedCourse);
       const updatedCourses = courses.map(course =>
         course.id === id ? result : course
       );

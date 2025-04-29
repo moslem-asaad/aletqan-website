@@ -5,6 +5,8 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import styles from "./Login.module.css";
 import { useAuth } from "../../context/AuthContext ";
+import { server } from "../../utils/constants";
+
 
 function Login() {
     const navigate = useNavigate();
@@ -42,7 +44,7 @@ function Login() {
     };
 
     try {
-        const response = await fetch("http://localhost:8090/api/auth/login", {
+        const response = await fetch(`${server}/api/auth/login`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

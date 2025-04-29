@@ -7,13 +7,15 @@ import { getAuthHeaders, getUserInfo } from '../../utils/auth';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import TeacherLessons from '../Lesson/TeacherLessons';
+import { server } from '../../utils/constants';
+
 
 
 const headers = getAuthHeaders();
 
 const fetchCourse = async (teacherId, courseId) => {
   try {
-    const response = await fetch(`http://localhost:8090/api/courses/teacher/${teacherId}/${courseId}`, {
+    const response = await fetch(`${server}/api/courses/teacher/${teacherId}/${courseId}`, {
       method: 'GET',
       headers
     });
@@ -32,7 +34,7 @@ const fetchCourse = async (teacherId, courseId) => {
 
 const fetchLessons = async (teacherId, courseId) => {
   try {
-    const response = await fetch(`http://localhost:8090/api/lessons/teacher/${teacherId}/${courseId}`, {
+    const response = await fetch(`${server}/api/lessons/teacher/${teacherId}/${courseId}`, {
       method: 'GET',
       headers
     });
@@ -51,7 +53,7 @@ const fetchLessons = async (teacherId, courseId) => {
 
 const editCourse = async (teacherId, courseId, updatedData) => {
   try {
-    const response = await fetch(`http://localhost:8090/api/courses/teacher/${teacherId}/${courseId}`, {
+    const response = await fetch(`${server}/api/courses/teacher/${teacherId}/${courseId}`, {
       method: 'PUT',
       headers: {
         ...headers,
@@ -86,106 +88,6 @@ function TeacherCourseDetails() {
 
   const [editingField, setEditingField] = useState(null);
   const [editedValue, setEditedValue] = useState("");
-
-  const [newResources, setNewResources] = useState({});
-const [activeLessonId, setActiveLessonId] = useState(null);
-const [editingLessonId, setEditingLessonId] = useState(null);
-const [resourceEditStates, setResourceEditStates] = useState({});
-
-  const toggleResourceForm = (lessonId) => {
-    setActiveLessonId(prev => prev === lessonId ? null : lessonId);
-  };
-
-  const toggleEditResources = (lessonId) => {
-    setEditingLessonId(prev => prev === lessonId ? null : lessonId);
-  };
-
-  const handleResourceChange = (e, lessonId) => {
-    const { name, value, type, checked } = e.target;
-    setNewResources(prev => ({
-      ...prev,
-      [lessonId]: {
-        ...prev[lessonId],
-        [name]: type === 'checkbox' ? checked : value
-      }
-    }));
-  };
-
-  const handleEditResourceChange = (e, resourceId) => {
-    const { name, value, type, checked } = e.target;
-    setResourceEditStates(prev => ({
-      ...prev,
-      [resourceId]: {
-        ...prev[resourceId],
-        [name]: type === 'checkbox' ? checked : value
-      }
-    }));
-  };
-
-  const confirmAndDeleteResource = async (resourceId, lessonId) => {
-    if (!window.confirm('هل أنت متأكد أنك تريد حذف هذا المورد؟')) return;
-    try {
-      const response = await fetch(`http://localhost:8090/api/lessons/resources/${resourceId}`, {
-        method: 'DELETE',
-        headers
-      });
-      if (!response.ok) throw new Error("فشل الحذف");
-      toast.success("🗑️ تم حذف المورد بنجاح!");
-      setLessons(prev => prev.map(lesson =>
-        lesson.id === lessonId
-          ? { ...lesson, resources: lesson.resources.filter(r => r.id !== resourceId) }
-          : lesson
-      ));
-    } catch (err) {
-      toast.error(err.message || '❌ فشل الحذف');
-    }
-  };
-
-  const confirmAndUpdateResource = async (resourceId, lessonId) => {
-    if (!window.confirm('هل تريد حفظ التعديلات؟')) return;
-    try {
-      const response = await fetch(`http://localhost:8090/api/lessons/resources/${resourceId}`, {
-        method: 'PUT',
-        headers: {
-          ...headers,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(resourceEditStates[resourceId])
-      });
-      if (!response.ok) throw new Error("فشل التحديث");
-      const updatedLesson = await response.json();
-      toast.success("✏️ تم تحديث المورد بنجاح!");
-      setLessons(prev => prev.map(l => l.id === lessonId ? updatedLesson : l));
-      setResourceEditStates(prev => ({ ...prev, [resourceId]: undefined }));
-    } catch (err) {
-      toast.error(err.message || '❌ فشل التحديث');
-    }
-  };
-
-  const addResourceToLesson = async (lessonId) => {
-    try {
-      const resourceData = newResources[lessonId];
-      const response = await fetch(`http://localhost:8090/api/lessons/${lessonId}/resources`, {
-        method: 'POST',
-        headers: {
-          ...headers,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(resourceData)
-      });
-
-      if (!response.ok) throw new Error("فشل إضافة المورد");
-      const updatedLesson = await response.json();
-      toast.success("✅ تم إضافة المورد بنجاح!");
-      setLessons(prev =>
-        prev.map(l => l.id === lessonId ? updatedLesson : l)
-      );
-      setActiveLessonId(null);
-      setNewResources(prev => ({ ...prev, [lessonId]: {} }));
-    } catch (err) {
-      toast.error(err.message || '❌ فشل في الإضافة');
-    }
-  };
 
   useEffect(() => {
     if (!course) {

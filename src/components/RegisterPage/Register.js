@@ -5,6 +5,8 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import Headbar from "../HomePage/Headbar";
 import styles from "./Register.module.css";
 import { useNavigate } from "react-router-dom";
+import { server } from "../../utils/constants";
+
 
 
 function Register() {
@@ -49,7 +51,7 @@ function Register() {
         };
 
         try {
-            const response = await fetch("http://localhost:8090/api/auth/register", {
+            const response = await fetch(`${server}/api/auth/register`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
