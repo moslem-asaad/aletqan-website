@@ -8,15 +8,10 @@ import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext ';
 import TeacherCourseDetails from './components/Teacher/TeacherCourseDetails';
 
-
-
-
-
-
 function App() {
   return (
-    <AuthProvider>
-      <Router>
+    <Router>
+      <AuthProvider>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
@@ -30,9 +25,10 @@ function App() {
             element={<ProtectedRoute element={TeacherCourseDetails} allowedRole="TEACHER" />}
           />
         </Routes>
-      </Router>
-    </AuthProvider>
+      </AuthProvider>
+    </Router>
   );
 }
+
 
 export default App;
