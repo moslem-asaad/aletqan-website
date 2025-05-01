@@ -11,7 +11,7 @@ function TeacherHeadbar() {
     <header className={styles.headbar}>
       <div className={styles["top-bar"]}>
         <div className={styles["right-side"]}>
-          <a href="#"><FaUserCircle className={styles["user-icon"]} /></a>
+          <a href="/teacher"><FaUserCircle className={styles["user-icon"]} /></a>
           <span>{userName}</span>
         </div>
 

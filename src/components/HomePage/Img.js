@@ -3,6 +3,8 @@ import "../CSS/Img.css";
 import img1 from '../assets/1.png';
 import img2 from '../assets/2.png';
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext ";
+
 
 import {
 
@@ -10,6 +12,20 @@ import {
 
 function Img() {
     const navigate = useNavigate();
+    const { user } = useAuth();
+
+    const handleLoginClick = () => {
+        if (user) {
+            if (user.role === "TEACHER") {
+                navigate("/teacher");
+            } else if (user.role === "STUDENT") {
+                navigate("/student");
+            }
+        } else {
+            navigate("/login");
+        }
+    };
+
     function Message() {
         return (
             <div className="message">
@@ -30,7 +46,7 @@ function Img() {
                     <span className="sp2">تحفيظ وتجويد وبناء تربوي لجميع الأجيال </span>
 
                     <div className="overlay-buttons">
-                        <button className="btn login-btn"  onClick={() => navigate('/login')}>تسجيل الدخول</button>
+                        <button className="btn login-btn"  onClick={handleLoginClick}>تسجيل الدخول</button>
                         <button className="btn join-btn">ساهم معنا</button>
                     </div>
 
