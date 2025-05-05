@@ -9,10 +9,11 @@ import { server } from '../../utils/constants';
 
 
 
-const headers = getAuthHeaders();
+
 
 const fetchLessons = async (teacherId, courseId) => {
     try {
+        const headers = getAuthHeaders();
         const response = await fetch(`${server}/api/lessons/teacher/${teacherId}/${courseId}`, {
             method: 'GET',
             headers

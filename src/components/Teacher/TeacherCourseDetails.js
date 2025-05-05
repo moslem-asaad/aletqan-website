@@ -11,10 +11,11 @@ import { server } from '../../utils/constants';
 
 
 
-const headers = getAuthHeaders();
+
 
 const fetchCourse = async (teacherId, courseId) => {
   try {
+    const headers = getAuthHeaders();
     const response = await fetch(`${server}/api/courses/teacher/${teacherId}/${courseId}`, {
       method: 'GET',
       headers
@@ -34,6 +35,7 @@ const fetchCourse = async (teacherId, courseId) => {
 
 const fetchLessons = async (teacherId, courseId) => {
   try {
+    const headers = getAuthHeaders();
     const response = await fetch(`${server}/api/lessons/teacher/${teacherId}/${courseId}`, {
       method: 'GET',
       headers
@@ -53,6 +55,7 @@ const fetchLessons = async (teacherId, courseId) => {
 
 const editCourse = async (teacherId, courseId, updatedData) => {
   try {
+    const headers = getAuthHeaders();
     const response = await fetch(`${server}/api/courses/teacher/${teacherId}/${courseId}`, {
       method: 'PUT',
       headers: {
