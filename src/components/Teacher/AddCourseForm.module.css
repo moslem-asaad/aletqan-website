@@ -1,0 +1,138 @@
+/* === الأسلوب الأساسي (ديسكتوب ≥768px) ==================== */
+.scheduleBuilder {
+  border: 1px solid #eee;
+  padding: 8px;
+  margin-bottom: 12px;
+  border-radius: 8px;
+}
+
+.scheduleRow {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.entriesList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0;
+  margin: 8px 0 0;
+  list-style: none;
+}
+
+.entryChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #f5f7ff;
+  color: #0d1b2a;
+  padding: 6px 10px;
+  border-radius: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .12);
+  font-weight: 500;
+}
+
+.addBtn,
+.removeBtn {
+  padding: 4px 8px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.addBtn   { background: #2d8f2d; color: #fff; }
+.removeBtn,
+.closeBtn { background: #c0392b; color: #fff; }
+
+.closeBtn {
+  background: transparent;
+  border: none;
+  font-size: 14px;
+  line-height: 1;
+  color: #c0392b;
+  cursor: pointer;
+  padding: 0 4px;
+}
+
+.entryChip:hover .closeBtn { color: #e74c3c; }
+
+.scheduleRow select,
+.scheduleRow input[type="time"] {
+  border-radius: 4px;
+  padding: 2px 6px;
+}
+
+
+.scheduleBuilder {
+  overflow: hidden; 
+}
+
+.scheduleRow select,
+.scheduleRow input[type="time"] {
+  width: 100%;
+  box-sizing: border-box; 
+}
+
+.errorMsg { color:#c0392b; font-size:.85rem; margin:4px 0 0; }
+.hint { color:#666;   font-size:.85rem; }
+
+.scheduleBuilder { border:1px solid #eee; border-radius:8px; padding:8px; margin-bottom:12px; }
+.scheduleRow  { display:flex; flex-wrap:wrap; gap:6px; align-items:center; }
+
+.entriesList { display:flex; flex-wrap:wrap; gap:6px; list-style:none; padding:0; margin-top:8px; }
+.entryChip   { background:#f5f7ff; border-radius:18px; padding:4px 10px; display:inline-flex; gap:4px; }
+.addBtn, .closeBtn {
+  border:none; cursor:pointer; padding:4px 8px; border-radius:4px;
+}
+.addBtn   { background:#2d8f2d; color:#fff; }
+.closeBtn { background:#c0392b; color:#fff; }
+
+
+
+@media (max-width: 767px) {
+  .scheduleRow {
+    gap: 6px;
+  }
+
+  .entryChip {
+    font-size: 0.9rem;
+    padding: 5px 9px;
+  }
+
+  .addBtn,
+  .removeBtn {
+    padding: 4px 6px;
+  }
+}
+
+@media (max-width: 479px) {
+
+  
+  .scheduleRow {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .scheduleRow select,
+  .scheduleRow input[type="time"] {
+    width: 100%;
+  }
+
+  .addBtn {
+    width: 100%;
+    padding: 6px 0;
+    font-weight: 600;
+  }
+
+  .entryChip {
+    font-size: 0.85rem;
+    gap: 4px;
+    padding: 5px 8px;
+  }
+
+  .closeBtn {
+    font-size: 16px;  
+  }
+}

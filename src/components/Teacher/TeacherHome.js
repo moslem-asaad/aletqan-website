@@ -9,6 +9,11 @@ import { getAuthHeaders, getUserInfo } from "../../utils/auth";
 import { useNavigate } from "react-router-dom";
 import { server } from "../../utils/constants";
 import Footer from "../HomePage/Footer";
+import { ToastContainer, toast } from 'react-toastify';
+import AddCourseForm from "./AddCourseForm";
+import AddLessonForm from "./AddLessonForm";
+
+
 
 
 const fetchCourses = async (userId) => {
@@ -28,6 +33,36 @@ const editCourse = async (userId, course) => {
   return res.json();
 };
 
+const createCourse = async (course) => {
+  const headers = { ...getAuthHeaders(), "Content-Type": "application/json" };
+  const res = await fetch(
+    `${server}/api/courses`,
+    { method: "POST", headers, body: JSON.stringify(course) }
+  );
+  if (!res.ok) throw new Error(`HTTP error! ${res.status}`);
+  return res.json();
+}
+
+const fetchNextLessons = async (userId, page = 0) => {
+  const headers = getAuthHeaders();
+  const res = await fetch(`${server}/api/course-times/next?teacherId=${userId}&page=${page}`, { headers });
+  if (res.status === 204) return [];
+  if (!res.ok) throw new Error(`HTTP error! ${res.status}`);
+  return res.json();
+};
+
+
+const createLesson = async (lesson) => {
+  const headers = { ...getAuthHeaders(), "Content-Type": "application/json" };
+  const res = await fetch(
+    `${server}/api/lessons`,
+    { method: "POST", headers, body: JSON.stringify(lesson) }
+  );
+  if (!res.ok) throw new Error(`HTTP error! ${res.status}`);
+  return res.json();
+}
+
+
 function TeacherHome() {
   const navigate = useNavigate();
 
@@ -35,16 +70,18 @@ function TeacherHome() {
   const [editingCourseId, setEditingCourseId] = useState(null);
   const [editedName, setEditedName] = useState("");
   const [user, setUser] = useState(null);
+  const [showAddCourseModal, setAddCourseShowModal] = useState(false);
+  const [form, setForm] = useState({ name: "", schedule: [], studentIds: "" });
 
+  const [showAddLessonModal, setAddLessonShowModal] = useState(false);
+  const [lessonform, setLessonForm] = useState({ title: "", description: "", courseId: "", resources: [] });
   const coursesPerPage = 16;
   const [currentPage, setCurrentPage] = useState(0);
 
-  const [upcomingLessons] = useState([
-    { id: 1, name: "اسم الدورة", date: "24.10" },
-    { id: 2, name: "اسم الدورة", date: "30.10" },
-    { id: 2, name: "اسم الدورة", date: "30.10" },
-    { id: 2, name: "اسم الدورة", date: "30.10" },
-  ]);
+  const [upcomingLessons, setUpcomingLessons] = useState([]);
+  const [lessonPage, setLessonPage] = useState(0);
+  const lessonsPerPage = 4;
+
   const [notifications] = useState([
     "الإشعار الأول",
     "الإشعار الثاني",
@@ -56,7 +93,67 @@ function TeacherHome() {
   useEffect(() => {
     if (!user) return;
     fetchCourses(user.userId).then(setCourses).catch(console.error);
+    fetchNextLessons(user.userId, 0).then(setUpcomingLessons).catch(console.error);
   }, [user]);
+
+
+  const submitNewCourse = async () => {
+    try {
+      const payload = {
+        name: form.name,
+        schedule: form.schedule,
+        teacherId: user.userId,
+        studentIds:
+          form.studentIds
+            .split(",")
+            .map((s) => s.trim())
+            .filter(Boolean),
+      };
+      const response = await createCourse(payload);
+      toast.success("✅ تم إضافة الدورة بنجاح!");
+      setCourses([...courses, response]);
+      setForm({ name: "", schedule: "", studentIds: "" });
+      setAddCourseShowModal(false);
+    } catch (error) {
+      toast.error(error.message || "❌ فشل في الإضافة");
+    }
+    setAddCourseShowModal(null);
+  }
+
+  const submitNewLesson = async () => {
+    try {
+      const payload = {
+        title: lessonform.title,
+        description: lessonform.description,
+        courseId: lessonform.courseId,
+        resources: lessonform.resources,
+      };
+      const response = await createLesson(payload)
+      toast.success("✅ تم إضافة الدرس بنجاح!");
+      setLessonForm({ title: "", description: "", courseId: "", resources: [] });
+      setAddLessonShowModal(false);
+    } catch (error) {
+      toast.error(error.message || "❌ فشل في الإضافة");
+    }
+    setAddLessonShowModal(null);
+  }
+
+  const loadMoreLessons = async () => {
+    try {
+      const nextPage = lessonPage + 1;
+      const moreLessons = await fetchNextLessons(user.userId, nextPage);
+      if (moreLessons.length > 0) {
+        setUpcomingLessons([...upcomingLessons, ...moreLessons]);
+        setLessonPage(nextPage);
+      } else {
+        toast.info("لا يوجد دروس إضافية");
+      }
+    } catch (e) {
+      toast.error("فشل تحميل الدروس الإضافية");
+    }
+  };
+
+
 
   const displayNumStudents = (n) =>
     n === 0
@@ -98,15 +195,15 @@ function TeacherHome() {
     }
   };
 
-  const addCourse = () =>
-    setCourses([
-      ...courses,
-      { id: courses.length + 1, name: "دورة جديدة", numOfStudents: 0 },
-    ]);
+  const handleLessonClick = (courseId) => {
+    const course = courses.find((c) => c.id === courseId);
+    if (course) {
+      navigate(`/teacher/course/${courseId}`, { state: { course } });
+    } else {
+      toast.warn("لم يتم العثور على الدورة المرتبطة");
+    }
+  };
 
-  const handleLessonClick = (lessonId) => {
-
-  }
 
   const scrollTo = (id) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
@@ -130,18 +227,25 @@ function TeacherHome() {
             </h2>
             <div className={styles.upcomingCard}>
               {upcomingLessons.map((l) => (
-                <div key={l.id} className={styles.lessonRow} onClick={() => handleLessonClick(l.id)}>
+                <div key={l.id} className={styles.lessonRow} onClick={() => handleLessonClick(l.courseId)}>
                   <span className={styles.navArrow}>◄</span>
                   <span>{l.name}</span>
-                  <span>{l.date}</span>
+                  <span>{new Date(l.nextLessonDate).toLocaleDateString("ar-EG", {
+                    weekday: "short",
+                    day: "numeric",
+                    month: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit"
+                  })}</span>
+
                 </div>
               ))}
-              <button className={styles.showAllBtn}>عرض الجميع</button>
+              <button className={styles.showAllBtn} onClick={loadMoreLessons}>عرض المزيد</button>
             </div>
           </section>
 
-          <button className={styles.goldBtn}>إنشاء دورة</button>
-          <button className={styles.goldBtn}>إضافة درس</button>
+          <button onClick={() => setAddCourseShowModal(true)} className={styles.goldBtn}>إنشاء دورة</button>
+          <button onClick={() => setAddLessonShowModal(true)} className={styles.goldBtn}>إضافة درس</button>
           <button className={styles.goldBtn}>إرسال إشعار</button>
           <button className={styles.goldBtn}>إنشاء منظمة</button>
 
@@ -150,7 +254,7 @@ function TeacherHome() {
           <div id="courses" className={styles.coursesSection}>
             <div className={styles.header}>
               <h2>دوراتي</h2>
-              <button onClick={addCourse} className={styles.addCourseBtn}>
+              <button onClick={() => setAddCourseShowModal(true)} className={styles.addCourseBtn}>
                 إنشاء دورة +
               </button>
             </div>
@@ -258,8 +362,35 @@ function TeacherHome() {
         <button onClick={() => scrollTo("courses")}>دوراتي</button>
         <button onClick={() => scrollTo("info")} >معلومات عامة</button>
       </nav>
+
+      {showAddCourseModal && (
+        <AddCourseForm
+          setShowModal={setAddCourseShowModal}
+          setForm={setForm}
+          form={form}
+          submitNewCourse={submitNewCourse}
+        />
+      )}
+
+      {showAddLessonModal && (
+        <AddLessonForm
+          courses={courses}
+          setShowModal={setAddLessonShowModal}
+          setForm={setLessonForm}
+          form={lessonform}
+          submitNewLesson={submitNewLesson}
+        />
+      )}
+
+
+
+
+      <ToastContainer rtl />
+
     </div>
   );
+
+
 }
 
 export default TeacherHome;
