@@ -75,9 +75,9 @@ function Lesson({ lesson, index, onLessonUpdate, onResourceDeleted }) {
 
     const saveResourceChanges = async () => {
         if (!editingResource) return;
-    
+
         if (!window.confirm('هل تريد حفظ التعديلات؟')) return;
-    
+
         try {
             const response = await fetch(`${server}/api/lessons/resources/${editingResource.id}`, {
                 method: 'PUT',
@@ -87,53 +87,102 @@ function Lesson({ lesson, index, onLessonUpdate, onResourceDeleted }) {
                 },
                 body: JSON.stringify(editFormData)
             });
-    
+
             if (!response.ok) throw new Error("فشل التحديث");
             const updatedResource = await response.json();
-    
+
             const updatedLesson = {
                 ...lesson,
                 resources: lesson.resources.map(res => res.id === updatedResource.id ? updatedResource : res)
             };
             onLessonUpdate(updatedLesson);
-    
+
             toast.success("✏️ تم تحديث المورد بنجاح!");
             setEditingResource(null);
         } catch (err) {
             toast.error(err.message || '❌ فشل التحديث');
         }
     };
-    
+
 
 
 
 
     return (
-        <>
-            <ul className={styles.main}>
-                <li key={index} className={styles.lessonCard}>
-                    <strong>{lesson.title}</strong><br />
-                    <span>{lesson.description}</span>
+        <div className={styles.lessonCard}>
+            <div
+                className={styles.lessonHeader}
+                onClick={() =>
+                    setActiveLessonId(activeLessonId === lesson.id ? null : lesson.id)
+                }
+            >
+                <strong>📘 الدرس {index + 1}:</strong> {lesson.title}
+                <span className={styles.arrow}>{activeLessonId === lesson.id ? "▾" : "▸"}</span>
+            </div>
 
-                    {lesson.resources && lesson.resources.length > 0 ? (
-                        <ShowResources />
+            {activeLessonId === lesson.id && (
+                <div className={styles.lessonContent}>
+                    <p className={styles.lessonDescription}>{lesson.description}</p>
+
+                    {lesson.resources?.length > 0 ? (
+                        <ul className={styles.resourceList}>
+                            {lesson.resources.map((res, i) => (
+                                <li
+                                    key={res.id}
+                                    className={styles.resourceItem}
+                                    onMouseEnter={() => setHoveredResourceIndex(i)}
+                                    onMouseLeave={() => setHoveredResourceIndex(null)}
+                                >
+                                    <div className={styles.resourceText}>
+                                        <span className={styles.badge}>
+                                            {res.type === "PDF" ? "📄 PDF" : "🎥 فيديو"}
+                                        </span>
+                                        <strong>{res.name}</strong>
+                                        <a
+                                            className={styles.resourceLink}
+                                            href={res.url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
+                                            {res.urlShort}
+                                        </a>
+                                    </div>
+
+                                    {hoveredResourceIndex === i && (
+                                        <div className={styles.resourceActions}>
+                                            <button onClick={() => openEditForm(res)} className={styles.editButton}>
+                                                ✏️
+                                            </button>
+                                            <button onClick={() => confirmAndDeleteResource(res.id, lesson.id)} className={styles.deleteButton}>
+                                                ❌
+                                            </button>
+                                        </div>
+                                    )}
+                                </li>
+                            ))}
+                        </ul>
                     ) : (
-                        <p style={{ fontStyle: "italic", marginTop: "8px" }}>لا توجد موارد لهذا الدرس.</p>
+                        <p className={styles.noResources}>لا توجد موارد لهذا الدرس.</p>
                     )}
 
                     <button
+                        className={styles.addButton}
                         onClick={() => {
-                            setAddFormData({ name: '', url: '', urlShort: '', type: 'PDF', internal: false });
+                            setAddFormData({
+                                name: "",
+                                url: "",
+                                urlShort: "",
+                                type: "PDF",
+                                internal: false,
+                            });
                             setShowAddResourceModal(true);
                         }}
-                        className={styles.addButton}
                     >
                         ➕ إضافة مورد
                     </button>
+                </div>
+            )}
 
-
-                </li>
-            </ul>
             {showAddResourceModal && (
                 <AddResourceModal
                     newResourceData={addFormData}
@@ -142,6 +191,7 @@ function Lesson({ lesson, index, onLessonUpdate, onResourceDeleted }) {
                     onCancel={() => setShowAddResourceModal(false)}
                 />
             )}
+
             {editingResource && (
                 <EditResourceModal
                     editFormData={editFormData}
@@ -150,8 +200,8 @@ function Lesson({ lesson, index, onLessonUpdate, onResourceDeleted }) {
                     onCancel={() => setEditingResource(null)}
                 />
             )}
+        </div>
 
-        </>
     );
 
 

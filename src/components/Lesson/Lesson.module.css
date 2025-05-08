@@ -165,4 +165,83 @@
     cursor: pointer;
   }
   
+  .lessonCard {
+    background-color: #fefefe;
+    border-radius: 16px;
+    padding: 14px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+    color: #222;
+  }
+  
+  .lessonHeader {
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #222;
+  }
+  
+  .arrow {
+    font-size: 1.2rem;
+    color: #666;
+  }
+  
+  .lessonContent {
+    margin-top: 10px;
+  }
+  
+  .lessonDescription {
+    color: #777;
+    font-size: 0.95rem;
+    margin-bottom: 10px;
+  }
+  
+  .resourceList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .resourceItem {
+    padding: 10px;
+    border-bottom: 1px solid #e3e3e3;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .resourceText {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .resourceLink {
+    font-size: 0.85rem;
+    color: #0074d9;
+    text-decoration: underline;
+  }
+  
+  .resourceActions {
+    display: flex;
+    gap: 8px;
+  }
+  
+  .noResources {
+    font-style: italic;
+    color: #999;
+  }
+  
+  .badge {
+    display: inline-block;
+    background-color: #f0f0f0;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    color: #444;
+    margin-bottom: 4px;
+  }
   

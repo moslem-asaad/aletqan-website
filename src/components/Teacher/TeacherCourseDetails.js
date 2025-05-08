@@ -8,6 +8,8 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import TeacherLessons from '../Lesson/TeacherLessons';
 import { server } from '../../utils/constants';
+import { getArabicDay, formatTime } from '../../utils/date';
+
 
 
 
@@ -92,6 +94,17 @@ function TeacherCourseDetails() {
   const [editingField, setEditingField] = useState(null);
   const [editedValue, setEditedValue] = useState("");
 
+  const days = [
+    { value: "Sunday", label: "الأحد" },
+    { value: "Monday", label: "الإثنين" },
+    { value: "Tuesday", label: "الثلاثاء" },
+    { value: "Wednesday", label: "الأربعاء" },
+    { value: "Thursday", label: "الخميس" },
+    { value: "Friday", label: "الجمعة" },
+    { value: "Saturday", label: "السبت" },
+  ];
+
+
   useEffect(() => {
     if (!course) {
       const fetchData = async () => {
@@ -159,72 +172,171 @@ function TeacherCourseDetails() {
   return (
     <div className={styles.TeacherCourseDetails}>
       <TeacherHeadbar />
-      <div className={styles.main}>
-        <h2>تفاصيل الدورة</h2>
-        {loading && <p>جاري تحميل بيانات الدورة...</p>}
-        {error && <p style={{ color: 'red' }}>{error}</p>}
 
-        {!loading && course && (
-          <>
-            <p><strong>📘 رقم الدورة:</strong> {course.id}</p>
+      <div className={styles.mainGrid}>
 
+        {/* Right Sidebar */}
+        <div className={styles.sidebar}>
+          <div className={styles.courseCard}>
             {editingField === 'name' ? (
-              <div className={styles.fieldRow}>
-                <label className={styles.editLabel}>
-                  📝 اسم الدورة:
-                  <input
-                    type="text"
-                    value={editedValue}
-                    onChange={e => setEditedValue(e.target.value)}
-                    className={styles.inputField}
-                  />
-                </label>
+              <>
+                <input
+                  type="text"
+                  value={editedValue}
+                  onChange={e => setEditedValue(e.target.value)}
+                  onBlur={handleEditSubmit}
+                  autoFocus
+                  className={styles.inputField}
+                />
                 <div className={styles.buttonGroup}>
-                  <button onClick={handleEditSubmit} className={styles.saveButton}>💾 حفظ</button>
-                  <button onClick={() => setEditingField(null)} className={styles.cancelButton}>❌ إلغاء</button>
+                  <button onClick={handleEditSubmit} className={styles.saveButton}>💾</button>
+                  <button onClick={() => setEditingField(null)} className={styles.cancelButton}>✖️</button>
                 </div>
-              </div>
+              </>
             ) : (
-              <div className={styles.fieldRow}>
-                <p><strong>📝 اسم الدورة:</strong> {course.name}</p>
-                <button onClick={() => handleEdit('name')} className={styles.editButton}>✏️ تعديل الاسم</button>
-              </div>
+              <>
+                <h2 onClick={() => handleEdit('name')} className={styles.clickableTitle}>
+                  {course.name}
+                </h2>
+              </>
             )}
 
-            {editingField === 'schedule' ? (
-              <div className={styles.fieldRow}>
-                <label className={styles.editLabel}>
-                  📅 المواعيد:
-                  <input
-                    type="text"
-                    value={editedValue}
-                    onChange={e => setEditedValue(e.target.value)}
-                    className={styles.inputField}
-                  />
-                </label>
+
+
+          </div>
+          {editingField === 'schedule' ? (
+            <div className={styles.fieldRow}>
+              <div className={styles.scheduleEditContainer}>
+                {course.schedule.map((item, idx) => (
+                  <div key={idx} className={styles.scheduleRow}>
+                    <select
+                      value={item.dayOfWeek}
+                      onChange={(e) => {
+                        const newSchedule = [...course.schedule];
+                        newSchedule[idx].dayOfWeek = e.target.value;
+                        setCourse({ ...course, schedule: newSchedule });
+                      }}
+                    >
+                      {days.map(day => (
+                        <option key={day.value} value={day.value}>
+                          {day.label}
+                        </option>
+                      ))}
+                    </select>
+
+                    <input
+                      type="time"
+                      value={item.startTime}
+                      onChange={(e) => {
+                        const newSchedule = [...course.schedule];
+                        newSchedule[idx].startTime = e.target.value;
+                        setCourse({ ...course, schedule: newSchedule });
+                      }}
+                    />
+                    <input
+                      type="time"
+                      value={item.endTime}
+                      onChange={(e) => {
+                        const newSchedule = [...course.schedule];
+                        newSchedule[idx].endTime = e.target.value;
+                        setCourse({ ...course, schedule: newSchedule });
+                      }}
+                    />
+
+                    <button
+                      className={styles.deleteScheduleBtn}
+                      onClick={() => {
+                        const newSchedule = course.schedule.filter((_, i) => i !== idx);
+                        setCourse({ ...course, schedule: newSchedule });
+                      }}
+                    >
+                      🗑️
+                    </button>
+                  </div>
+                ))}
+
+
+                <button
+                  onClick={() => {
+                    const newSchedule = [...course.schedule, {
+                      dayOfWeek: "Monday",
+                      startTime: "10:00",
+                      endTime: "12:00"
+                    }];
+                    setCourse({ ...course, schedule: newSchedule });
+                  }}
+                  className={styles.addButton}
+                >
+                  ➕ إضافة موعد
+                </button>
+
                 <div className={styles.buttonGroup}>
-                  <button onClick={handleEditSubmit} className={styles.saveButton}>💾 حفظ</button>
-                  <button onClick={() => setEditingField(null)} className={styles.cancelButton}>❌ إلغاء</button>
+                  <button
+                    onClick={async () => {
+                      try {
+                        const updated = await editCourse(user.userId, id, {
+                          schedule: course.schedule,
+                          teacherId: course.teacherId
+                        });
+                        setCourse(updated);
+                        setEditingField(null);
+                        toast.success("✅ تم حفظ المواعيد!");
+                      } catch (err) {
+                        toast.error(err.message || '❌ فشل التحديث');
+                      }
+                    }}
+                    className={styles.saveButton}
+                  >
+                    💾 حفظ
+                  </button>
+                  <button onClick={() => setEditingField(null)} className={styles.cancelButton}>
+                    ❌ إلغاء
+                  </button>
                 </div>
               </div>
-            ) : (
-              <div className={styles.fieldRow}>
-                <p><strong>📅 المواعيد:</strong> {course.schedule}</p>
-                <button onClick={() => handleEdit('schedule')} className={styles.editButton}>✏️ تعديل المواعيد</button>
-              </div>
-            )}
+            </div>
+          ) : (
 
-            <p><strong>👥 عدد الطلاب:</strong> {course.numOfStudents}</p>
-            
-            {<TeacherLessons id={id} course={course} />}
-            
-          </>
-        )}
+            <div className={styles.scheduleCard}>
+
+              {course.schedule.map((item, i) => (
+                <div key={i} className={styles.lessonRow}>
+                  <span>{getArabicDay(item.dayOfWeek)}</span>
+                  <span>{formatTime(item.startTime)} - {formatTime(item.endTime)}</span>
+                </div>
+              ))}
+              <button onClick={() => handleEdit('schedule')} className={styles.showAllBtn}>
+                ✏️ تعديل المواعيد
+              </button>
+            </div>
+
+          )}
+
+          <div className={styles.infoBox}>
+            <p>عدد الطلاب</p>
+            <strong>{course.numOfStudents}</strong>
+          </div>
+
+          <button className={styles.goldBtn}>إضافة درس</button>
+          <button className={styles.goldBtn}>إضافة مورد عام</button>
+          <button className={styles.goldBtn}>إنشاء وظيفة</button>
+          <button className={styles.goldBtn}>إنشاء إختبار</button>
+        </div>
+
+        {/* Left Column -  Lessons */}
+          <div className={styles.courseDetails}>
+            <div className={styles.lessonSection}>
+              {<TeacherLessons id={id} course={course} />}
+            </div>
+          </div>
+
       </div>
+
       <Footer className={styles["teacher-footer"]} />
-      <ToastContainer position="bottom-right" autoClose={3000} hideProgressBar={false} newestOnTop closeOnClick rtl pauseOnFocusLoss draggable pauseOnHover />
+      <ToastContainer position="bottom-right" autoClose={3000} />
     </div>
   );
+
 }
 
 export default TeacherCourseDetails;

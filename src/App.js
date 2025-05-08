@@ -8,6 +8,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext ';
 import TeacherCourseDetails from './components/Teacher/TeacherCourseDetails';
 
+
 function App() {
   return (
     <Router>
