@@ -31,8 +31,7 @@ const fetchLessons = async (teacherId, courseId) => {
     }
 };
 
-function TeacherLessons({ id, course }) {
-    const [lessons, setLessons] = useState([]);
+function TeacherLessons({ id, course, lessons, setLessons, handleDeleteLesson  }) {
     const [lessonsLoading, setLessonsLoading] = useState(true);
     const [lessonsError, setLessonsError] = useState(null);
     const [newResources, setNewResources] = useState({});
@@ -56,20 +55,21 @@ function TeacherLessons({ id, course }) {
 
     useEffect(() => {
         const fetchAndSetLessons = async () => {
-            try {
-                const lessonData = await fetchLessons(user.userId, id);
-                setLessons(lessonData);
-                setLessonsLoading(false);
-            } catch (err) {
-                setLessonsError(err.message || 'فشل تحميل الدروس');
-                setLessonsLoading(false);
-            }
+          try {
+            const lessonData = await fetchLessons(user.userId, id);
+            setLessons(lessonData);
+            setLessonsLoading(false);
+          } catch (err) {
+            setLessonsError(err.message || 'فشل تحميل الدروس');
+            setLessonsLoading(false);
+          }
         };
-
-        if (course) {
-            fetchAndSetLessons();
+      
+        if (course && lessons.length === 0) {
+          fetchAndSetLessons();
         }
-    }, [course, id, user.userId]);
+      }, [course, id, user.userId, lessons.length]);
+      
 
 
     return (
@@ -84,7 +84,7 @@ function TeacherLessons({ id, course }) {
                 {!lessonsLoading && lessons.length > 0 && (
                     <ul>
                         {lessons.map((lesson, index) => (
-                            <Lesson  key={lesson.id || index} lesson={lesson} index={index} onLessonUpdate={updateLesson} onResourceDeleted={deleteResource} />
+                            <Lesson  key={lesson.id || index} lesson={lesson} index={index} onLessonUpdate={updateLesson} onResourceDeleted={deleteResource} onDeleteLesson={handleDeleteLesson} />
 
                         ))}
                     </ul>

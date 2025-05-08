@@ -16,13 +16,12 @@ function AddLessonForm({ courses, setShowModal, form, setForm, submitNewLesson }
   const [resInternal, setResInternal] = useState(false);
   const [showErrors, setErrors] = useState(false);
 
-  const nameRegex = /^[\p{L}].{0,59}$/u;
-  //const isTitleValid = nameRegex.test(form.title);
+
 
   const { isValid: isTitleValid, errors: nameErrors } = validateField(form.title);
 
 
-  const isCourseChosen = Boolean(form.courseId);
+  const isCourseChosen = courses.length === 1 || Boolean(form.courseId);
   const isFormValid = isTitleValid && isCourseChosen;
 
 
@@ -50,6 +49,13 @@ function AddLessonForm({ courses, setShowModal, form, setForm, submitNewLesson }
     document.body.style.overflow = "hidden";
     return () => (document.body.style.overflow = prevOverflow);
   }, []);
+
+  useEffect(() => {
+    if (courses.length === 1 && !form.courseId) {
+      console.log(courses[0].id);
+      setForm(f => ({ ...f, courseId: courses[0].id }));
+    }
+  }, [courses, form.courseId, setForm]);
 
   return (
     <div className={styles.modalOverlay} onClick={() => setShowModal(false)}>
@@ -81,21 +87,26 @@ function AddLessonForm({ courses, setShowModal, form, setForm, submitNewLesson }
           />
         </label>
 
-        <label>
-          اختر الدورة
-          <select
-            value={form.courseId}
-            onChange={e => setForm({ ...form, courseId: Number(e.target.value) })}
-            required
-          >
-            <option value="">— اختر —</option>
-            {courses.map(c => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
-            ))}
-          </select>
-        </label>
+        {courses.length > 1 ? (
+          <label>
+            اختر الدورة
+            <select
+              value={form.courseId}
+              onChange={e => setForm({ ...form, courseId: Number(e.target.value) })}
+              required
+            >
+              <option value="">— اختر —</option>
+              {courses.map(c => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+          </label>
+        ) : (
+          // No need to show selection, only one course is passed
+          <input type="hidden" value={courses[0]?.id} />
+        )}
 
         <fieldset className={styles2.resBuilder}>
           <legend>الموارد</legend>

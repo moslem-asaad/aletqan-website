@@ -9,10 +9,29 @@ import 'react-toastify/dist/ReactToastify.css';
 import TeacherLessons from '../Lesson/TeacherLessons';
 import { server } from '../../utils/constants';
 import { getArabicDay, formatTime } from '../../utils/date';
+import AddLessonForm from './AddLessonForm';
 
 
 
 
+const deleteLesson = async (lessonId) => {
+  const headers = { ...getAuthHeaders(), "Content-Type": "application/json" };
+  const res = await fetch(
+    `${server}/api/lessons/${lessonId}`,
+    { method: "DELETE", headers}
+  );
+  if (!res.ok) throw new Error(`HTTP error! ${res.status}`);
+}
+
+const createLesson = async (lesson) => {
+  const headers = { ...getAuthHeaders(), "Content-Type": "application/json" };
+  const res = await fetch(
+    `${server}/api/lessons`,
+    { method: "POST", headers, body: JSON.stringify(lesson) }
+  );
+  if (!res.ok) throw new Error(`HTTP error! ${res.status}`);
+  return res.json();
+}
 
 
 const fetchCourse = async (teacherId, courseId) => {
@@ -79,6 +98,8 @@ const editCourse = async (teacherId, courseId, updatedData) => {
   }
 };
 
+
+
 function TeacherCourseDetails() {
   const { id } = useParams();
   const location = useLocation();
@@ -94,14 +115,17 @@ function TeacherCourseDetails() {
   const [editingField, setEditingField] = useState(null);
   const [editedValue, setEditedValue] = useState("");
 
+  const [showAddLessonModal, setAddLessonShowModal] = useState(false);
+  const [lessonform, setLessonForm] = useState({ title: "", description: "", courseId: "", resources: [] });
+
   const days = [
-    { value: "Sunday", label: "الأحد" },
-    { value: "Monday", label: "الإثنين" },
-    { value: "Tuesday", label: "الثلاثاء" },
-    { value: "Wednesday", label: "الأربعاء" },
-    { value: "Thursday", label: "الخميس" },
-    { value: "Friday", label: "الجمعة" },
-    { value: "Saturday", label: "السبت" },
+    { value: "SUNDAY", label: "الأحد" },
+    { value: "MONDAY", label: "الإثنين" },
+    { value: "TUESDAY", label: "الثلاثاء" },
+    { value: "WEDNESDAY", label: "الأربعاء" },
+    { value: "THURSDAY", label: "الخميس" },
+    { value: "FRIDAY", label: "الجمعة" },
+    { value: "SATURDAY", label: "السبت" },
   ];
 
 
@@ -168,42 +192,83 @@ function TeacherCourseDetails() {
     }
   };
 
+  const submitNewLesson = async () => {
+    try {
+      const payload = {
+        title: lessonform.title,
+        description: lessonform.description,
+        courseId: lessonform.courseId,
+        resources: lessonform.resources,
+      };
+      const response = await createLesson(payload);
+      setLessons(prev => [...prev, response]);
+      toast.success("✅ تم إضافة الدرس بنجاح!");
+      setLessonForm({ title: "", description: "", courseId: "", resources: [] });
+      setAddLessonShowModal(false);
+    } catch (error) {
+      toast.error(error.message || "❌ فشل في الإضافة");
+    }
+    setAddLessonShowModal(null);
+  }
+
+  const handleDeleteLesson = async (lessonId) => {
+    if (!window.confirm("هل أنت متأكد أنك تريد حذف هذا الدرس؟")) return;
+  
+    try {
+      await deleteLesson(lessonId);
+  
+      setLessons(prev => prev.filter(lesson => lesson.id !== lessonId));
+  
+      toast.success("🗑️ تم حذف الدرس بنجاح!");
+    } catch (err) {
+      console.error("فشل في حذف الدرس:", err);
+      toast.error("❌ فشل في حذف الدرس");
+    }
+  };
+  
+
 
   return (
     <div className={styles.TeacherCourseDetails}>
       <TeacherHeadbar />
+      <div className={styles.headerArea}>
+
+        <div className={styles.courseCard}>
+          {editingField === 'name' ? (
+            <>
+              <input
+                type="text"
+                value={editedValue}
+                onChange={e => setEditedValue(e.target.value)}
+                onBlur={handleEditSubmit}
+                autoFocus
+                className={styles.inputField}
+              />
+              <div className={styles.buttonGroup}>
+                <button onClick={handleEditSubmit} className={styles.saveButton}>💾</button>
+                <button onClick={() => setEditingField(null)} className={styles.cancelButton}>✖️</button>
+              </div>
+            </>
+          ) : (
+            <>
+              <h2 onClick={() => handleEdit('name')} className={styles.centerTitle}>
+                {course.name}
+              </h2>
+            </>
+          )}
+        </div>
+      </div>
 
       <div className={styles.mainGrid}>
 
+
+
         {/* Right Sidebar */}
         <div className={styles.sidebar}>
-          <div className={styles.courseCard}>
-            {editingField === 'name' ? (
-              <>
-                <input
-                  type="text"
-                  value={editedValue}
-                  onChange={e => setEditedValue(e.target.value)}
-                  onBlur={handleEditSubmit}
-                  autoFocus
-                  className={styles.inputField}
-                />
-                <div className={styles.buttonGroup}>
-                  <button onClick={handleEditSubmit} className={styles.saveButton}>💾</button>
-                  <button onClick={() => setEditingField(null)} className={styles.cancelButton}>✖️</button>
-                </div>
-              </>
-            ) : (
-              <>
-                <h2 onClick={() => handleEdit('name')} className={styles.clickableTitle}>
-                  {course.name}
-                </h2>
-              </>
-            )}
 
 
 
-          </div>
+          <h3>مواعيد الدروس</h3>
           {editingField === 'schedule' ? (
             <div className={styles.fieldRow}>
               <div className={styles.scheduleEditContainer}>
@@ -213,7 +278,7 @@ function TeacherCourseDetails() {
                       value={item.dayOfWeek}
                       onChange={(e) => {
                         const newSchedule = [...course.schedule];
-                        newSchedule[idx].dayOfWeek = e.target.value;
+                        newSchedule[idx].dayOfWeek = e.target.value.toUpperCase();
                         setCourse({ ...course, schedule: newSchedule });
                       }}
                     >
@@ -259,7 +324,7 @@ function TeacherCourseDetails() {
                 <button
                   onClick={() => {
                     const newSchedule = [...course.schedule, {
-                      dayOfWeek: "Monday",
+                      dayOfWeek: "MONDAY",
                       startTime: "10:00",
                       endTime: "12:00"
                     }];
@@ -282,7 +347,7 @@ function TeacherCourseDetails() {
                         setEditingField(null);
                         toast.success("✅ تم حفظ المواعيد!");
                       } catch (err) {
-                        toast.error(err.message || '❌ فشل التحديث');
+                        toast.error(err.message || "❌ فشل تحديث المواعيد");
                       }
                     }}
                     className={styles.saveButton}
@@ -317,20 +382,38 @@ function TeacherCourseDetails() {
             <strong>{course.numOfStudents}</strong>
           </div>
 
-          <button className={styles.goldBtn}>إضافة درس</button>
+          <button onClick={() => setAddLessonShowModal(true)} className={styles.goldBtn} >إضافة درس</button>
           <button className={styles.goldBtn}>إضافة مورد عام</button>
           <button className={styles.goldBtn}>إنشاء وظيفة</button>
           <button className={styles.goldBtn}>إنشاء إختبار</button>
         </div>
 
         {/* Left Column -  Lessons */}
-          <div className={styles.courseDetails}>
-            <div className={styles.lessonSection}>
-              {<TeacherLessons id={id} course={course} />}
-            </div>
+        <div className={styles.courseDetails}>
+          <div className={styles.lessonSection}>
+            {<TeacherLessons
+              id={id}
+              course={course}
+              lessons={lessons}
+              setLessons={setLessons}
+              handleDeleteLesson = {handleDeleteLesson}
+
+            />}
           </div>
+        </div>
 
       </div>
+
+
+      {showAddLessonModal && (
+        <AddLessonForm
+          courses={[course]}
+          setShowModal={setAddLessonShowModal}
+          setForm={setLessonForm}
+          form={lessonform}
+          submitNewLesson={submitNewLesson}
+        />
+      )}
 
       <Footer className={styles["teacher-footer"]} />
       <ToastContainer position="bottom-right" autoClose={3000} />

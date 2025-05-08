@@ -10,7 +10,7 @@ import { server } from '../../utils/constants';
 
 
 
-function Lesson({ lesson, index, onLessonUpdate, onResourceDeleted }) {
+function Lesson({ lesson, index, onLessonUpdate, onResourceDeleted, onDeleteLesson }) {
     const headers = getAuthHeaders();
 
     const [newResources, setNewResources] = useState({});
@@ -116,12 +116,24 @@ function Lesson({ lesson, index, onLessonUpdate, onResourceDeleted }) {
                     setActiveLessonId(activeLessonId === lesson.id ? null : lesson.id)
                 }
             >
+
                 <strong>📘 الدرس {index + 1}:</strong> {lesson.title}
                 <span className={styles.arrow}>{activeLessonId === lesson.id ? "▾" : "▸"}</span>
             </div>
 
             {activeLessonId === lesson.id && (
+
                 <div className={styles.lessonContent}>
+                    <button
+                        className={styles.deleteLessonBtn}
+                        onClick={() => {
+                            console.log(lesson.id);
+                                onDeleteLesson(lesson.id);
+                        }}
+                    >
+                        🗑️ حذف الدرس
+                    </button>
+
                     <p className={styles.lessonDescription}>{lesson.description}</p>
 
                     {lesson.resources?.length > 0 ? (

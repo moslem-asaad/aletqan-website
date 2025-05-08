@@ -245,3 +245,19 @@
     margin-bottom: 4px;
   }
   
+
+  .deleteLessonBtn {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 12px;
+    margin-top: 10px;
+    font-size: 0.95rem;
+    cursor: pointer;
+  }
+  
+  .deleteLessonBtn:hover {
+    background-color: #c82333;
+  }
+  
